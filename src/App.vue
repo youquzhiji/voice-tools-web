@@ -3,9 +3,9 @@
     <!-- use the router-link component for navigation. -->
     <!-- specify the link by passing the `to` prop. -->
     <!-- `<router-link>` will render an `<a>` tag with the correct `href` attribute -->
-    <router-link to="/">Home</router-link>
+    <router-link class="rlink" to="/">Home</router-link>
     |
-    <router-link to="/about">About</router-link>
+    <router-link class="rlink" to="/about">About</router-link>
   </p>
 
   <!-- route outlet -->
@@ -25,5 +25,8 @@
   -moz-osx-font-smoothing: grayscale
   text-align: center
   color: #2c3e50
-  margin-top: 60px
+
+  .rlink
+    color: hotpink
+    text-decoration: none
 </style>
