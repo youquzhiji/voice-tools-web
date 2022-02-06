@@ -19,6 +19,9 @@
 </script>
 
 <style lang="sass">
+@import "css/colors"
+@import "css/global"
+
 #app
   font-family: Avenir, Helvetica, Arial, sans-serif
   -webkit-font-smoothing: antialiased
@@ -29,4 +32,7 @@
   .rlink
     color: hotpink
     text-decoration: none
+
+  max-width: 600px
+  margin: auto
 </style>
