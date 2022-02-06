@@ -1,5 +1,7 @@
 # 6414 Frontend
 
+[Nightly Demo Link](https://alpha.voice.hydev.org/)
+
 ## Info
 
 Web Framework: `Vue 3 + Typescript + Vite`
