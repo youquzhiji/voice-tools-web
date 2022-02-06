@@ -1,6 +1,4 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png"/>
-
   <p>
     <!-- use the router-link component for navigation. -->
     <!-- specify the link by passing the `to` prop. -->
