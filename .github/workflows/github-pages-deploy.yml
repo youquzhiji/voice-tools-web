@@ -24,7 +24,8 @@ jobs:
       - name: Install and build
         run: |
           npm install
-          npm run build -- --base=/${{ github.event.repository.name }}/
+          # npm run build -- --base=/${{ github.event.repository.name }}/
+          npm run build
       - name: Deploy to github pages
         uses: JamesIves/github-pages-deploy-action@4.1.0
         with:
