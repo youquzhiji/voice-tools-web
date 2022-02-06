@@ -28,6 +28,11 @@ jobs:
           # pass --base if CNAME is not used
           # npm run build -- --base=/${{ github.event.repository.name }}/
           npm run build
+          
+          # Enable Vue Router history mode with 404.html hack for Github Pages
+          cd dist
+          ln -s index.html 404.html
+          
       - name: Deploy to github pages
         uses: JamesIves/github-pages-deploy-action@4.1.0
         with:
