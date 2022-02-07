@@ -9,7 +9,7 @@
 <script setup lang="ts">
 import {ElMessage} from "element-plus";
 
-function onDrop(e: DragEvent)
+async function onDrop(e: DragEvent)
 {
   // Prevent default behavior: Opening the file in a browser tab.
   e.preventDefault()
@@ -24,11 +24,26 @@ function onDrop(e: DragEvent)
       const item = e.dataTransfer.items[i]
       if (item.kind == 'file')
       {
-        // Read file
         const file = item.getAsFile()!
-        file.text().then(it => console.log(it))
-      }
-      else ElMessage.error(`Error: The item dropped must be a file, not a ${item.kind}`)
+
+        console.log(`File Dropped: ${file.name}\n` +
+            `- LastModified: ${file.lastModified}\n` +
+            `- Size: ${file.size}\n` +
+            `- Type: ${file.type}`)
+
+        // TODO: Convert file on backend
+        if (file.type != 'audio/wav')
+        {
+          ElMessage.error(`Error: The file must be in .wav format, your file is ${file.type}`)
+          return
+        }
+
+        // Read file
+        const buf = await file.arrayBuffer()
+
+        console.log(buf)
+
+      } else ElMessage.error(`Error: The item dropped must be a file, not a ${item.kind}`)
     }
   }
 }
