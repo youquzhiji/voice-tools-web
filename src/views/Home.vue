@@ -10,51 +10,57 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
 import {ElMessage} from "element-plus";
+import {Vue} from "vue-class-component";
 
-async function onDrop(e: DragEvent)
+export default class Home extends Vue
 {
-  // Prevent default behavior: Opening the file in a browser tab.
-  e.preventDefault()
-
-  // Read file data
-  if (e.dataTransfer && e.dataTransfer.items)
+  mounted()
   {
-    // Loop through all files
-    for (let i = 0; i < e.dataTransfer.items.length; i++)
+    console.log('Hi')
+  }
+
+  async onDrop(e: DragEvent)
+  {
+    // Prevent default behavior: Opening the file in a browser tab.
+    e.preventDefault()
+
+    // Read file data
+    if (e.dataTransfer && e.dataTransfer.items)
     {
-      // Check file type
-      const item = e.dataTransfer.items[i]
-      if (item.kind == 'file')
+      // Loop through all files
+      for (let i = 0; i < e.dataTransfer.items.length; i++)
       {
-        const file = item.getAsFile()!
-
-        console.log(`File Dropped: ${file.name}\n` +
-            `- LastModified: ${file.lastModified}\n` +
-            `- Size: ${file.size}\n` +
-            `- Type: ${file.type}`)
-
-        // TODO: Convert file on backend
-        // if (file.type != 'audio/wav')
-        // {
-        //   ElMessage.error(`Error: The file must be in .wav format, your file is ${file.type}`)
-        //   console.log('Incorrect file type, skipped.')
-        //   return
-        // }
-
-        // Read file
-        const buf = await file.arrayBuffer()
-        const audioContext = new AudioContext()
-
-        await audioContext.decodeAudioData(buf, (audio) =>
+        // Check file type
+        const item = e.dataTransfer.items[i]
+        if (item.kind == 'file')
         {
-          console.log(audio)
-        })
+          const file = item.getAsFile()!
 
-        console.log(buf)
+          console.log(`File Dropped: ${file.name}\n` +
+              `- LastModified: ${file.lastModified}\n` +
+              `- Size: ${file.size}\n` +
+              `- Type: ${file.type}`)
 
-      } else ElMessage.error(`Error: The item dropped must be a file, not a ${item.kind}`)
+          // TODO: Convert file on backend
+          // if (file.type != 'audio/wav')
+          // {
+          //   ElMessage.error(`Error: The file must be in .wav format, your file is ${file.type}`)
+          //   console.log('Incorrect file type, skipped.')
+          //   return
+          // }
+
+          // Read file
+          const buf = await file.arrayBuffer()
+          const audioContext = new AudioContext()
+
+          await audioContext.decodeAudioData(buf, (audio) =>
+          {
+            console.log(audio)
+          })
+        } else ElMessage.error(`Error: The item dropped must be a file, not a ${item.kind}`)
+      }
     }
   }
 }

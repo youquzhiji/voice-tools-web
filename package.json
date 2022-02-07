@@ -10,6 +10,7 @@
     "element-plus": "^1.3.0-beta.10",
     "fft": "^0.2.1",
     "vue": "^3.2.25",
+    "vue-class-component": "^8.0.0-rc.1",
     "vue-router": "4"
   },
   "devDependencies": {
