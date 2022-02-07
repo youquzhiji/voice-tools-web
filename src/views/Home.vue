@@ -4,6 +4,10 @@
   <div class="drop-box unselectable" @dragover="(e) => e.preventDefault()" @drop="onDrop">
     <span class="drop-label">Drop Here</span>
   </div>
+
+  <div class="waveform">
+    <canvas ref="cav"></canvas>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -32,14 +36,21 @@ async function onDrop(e: DragEvent)
             `- Type: ${file.type}`)
 
         // TODO: Convert file on backend
-        if (file.type != 'audio/wav')
-        {
-          ElMessage.error(`Error: The file must be in .wav format, your file is ${file.type}`)
-          return
-        }
+        // if (file.type != 'audio/wav')
+        // {
+        //   ElMessage.error(`Error: The file must be in .wav format, your file is ${file.type}`)
+        //   console.log('Incorrect file type, skipped.')
+        //   return
+        // }
 
         // Read file
         const buf = await file.arrayBuffer()
+        const audioContext = new AudioContext()
+
+        await audioContext.decodeAudioData(buf, (audio) =>
+        {
+          console.log(audio)
+        })
 
         console.log(buf)
 
