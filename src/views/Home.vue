@@ -1,12 +1,16 @@
 <template>
-  Hello World!
+  <div id="home">
+    <div class="usage">
+      Welcome to the
+    </div>
 
-  <div class="drop-box unselectable" @dragover="(e) => e.preventDefault()" @drop="onDrop">
-    <span class="drop-label">Drop Here</span>
-  </div>
+    <div class="drop-box unselectable" @dragover="(e) => e.preventDefault()" @drop="onDrop">
+      <span class="drop-label">Drop Here</span>
+    </div>
 
-  <div class="waveform">
-    <canvas ref="cav"></canvas>
+    <div class="waveform">
+      <canvas ref="canvas"></canvas>
+    </div>
   </div>
 </template>
 
@@ -66,20 +70,30 @@ export default class Home extends Vue
 }
 </script>
 
-<style lang="sass">
-.drop-box
-  width: 100%
-  height: 100px
-  margin-top: 20px
-  border: 5px dashed pink
-  border-radius: 25px
+<style lang="sass" scoped>
+#home
+  * + *
+    margin-top: 20px
 
-  display: flex
-  align-items: center
-  justify-content: center
+  .drop-box
+    width: 100%
+    height: 100px
+    border: 5px dashed pink
+    border-radius: 25px
+    box-sizing: border-box
 
-  .drop-label
-    color: gray
-    font-size: 1.5em
+    display: flex
+    align-items: center
+    justify-content: center
 
+    .drop-label
+      color: gray
+      font-size: 1.5em
+
+  canvas
+    height: 100px
+    width: 100%
+    display: block
+
+    box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%)
 </style>
