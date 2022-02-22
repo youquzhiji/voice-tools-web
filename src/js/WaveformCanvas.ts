@@ -33,31 +33,23 @@ export default class WaveformCanvas
      */
     drawAudio(audio: AudioBuffer)
     {
+        // Decoded audio data is an array of float that range from -1 to 1
         const data = audio.getChannelData(0)
-
-        const sorted = data.slice().sort()
-        const min = sorted[0]
-        const max = sorted[sorted.length - 1]
 
         // Data points per pixel
         const pxLen = audio.length / this.w
-
-        // Decoded audio data range from -1 to 1
-        console.log(min, max)
+        const hh = this.h / 2
 
         for (let x = 0; x < this.w; x++)
         {
+            // Compute min and max for each pixel region
             const area = data.slice(x * pxLen, (x + 1) * pxLen).sort()
             const aMin = area[0]
             const aMax = area[area.length - 1]
 
-            const hh = this.h / 2
-
+            // Draw line
             this.ctx.moveTo(x, hh - aMax * hh)
-            this.ctx.lineTo(x, hh)
-            this.ctx.stroke()
-            this.ctx.moveTo(x, hh - aMin * hh)
-            this.ctx.lineTo(x, hh)
+            this.ctx.lineTo(x, hh - aMin * hh)
             this.ctx.stroke()
         }
     }
