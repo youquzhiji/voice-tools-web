@@ -11,7 +11,11 @@
     </div>
 
     <div class="waveform" :style="{visibility: this.audio ? 'unset' : 'hidden'}">
-      <canvas ref="canvas"></canvas>
+      <canvas ref="wfCanvas"></canvas>
+    </div>
+
+    <div class="spectrogram" :style="{visibility: this.audio ? 'unset' : 'hidden'}">
+      <canvas ref="spCanvas"></canvas>
     </div>
   </div>
 </template>
@@ -20,20 +24,25 @@
 import {ElMessage} from "element-plus";
 import {Vue} from "vue-class-component";
 import WaveformCanvas from "@/js/WaveformCanvas";
+import SpectrogramCanvas from "@/js/SpectrogramCanvas";
 
 export default class Home extends Vue
 {
   declare $refs: {
-    canvas: HTMLCanvasElement
+    wfCanvas: HTMLCanvasElement
+    spCanvas: HTMLCanvasElement
   }
 
   waveformCanvas!: WaveformCanvas
+  spectrogramCanvas!: SpectrogramCanvas
+
   audio: AudioBuffer = null as never as AudioBuffer
 
   mounted()
   {
-    console.log('Initializing Canvas...')
-    this.waveformCanvas = new WaveformCanvas(this.$refs.canvas)
+    // Initialize canvas
+    this.waveformCanvas = new WaveformCanvas(this.$refs.wfCanvas)
+    this.spectrogramCanvas = new SpectrogramCanvas(this.$refs.spCanvas)
   }
 
   async onDrop(e: DragEvent)
