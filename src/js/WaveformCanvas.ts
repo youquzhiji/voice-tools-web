@@ -1,3 +1,5 @@
+const waveColor = 'pink'
+
 export default class WaveformCanvas
 {
     el: HTMLCanvasElement
@@ -48,6 +50,7 @@ export default class WaveformCanvas
             const aMax = area[area.length - 1]
 
             // Draw line
+            this.ctx.strokeStyle = waveColor
             this.ctx.moveTo(x, hh - aMax * hh)
             this.ctx.lineTo(x, hh - aMin * hh)
             this.ctx.stroke()
