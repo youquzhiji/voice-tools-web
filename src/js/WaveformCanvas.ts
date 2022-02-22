@@ -11,8 +11,10 @@ export default class WaveformCanvas
         this.el = canvas
         this.ctx = canvas.getContext("2d")!
 
-        this.w = canvas.width
-        this.h = canvas.height
+        // Fix: Allow setting canvas width and height using CSS
+        const canvasCss = window.getComputedStyle(canvas)
+        this.w = canvas.width = parseInt(canvasCss.width.replace('px', ''))
+        this.h = canvas.height = parseInt(canvasCss.height.replace('px', ''))
 
         this.drawGrid()
     }

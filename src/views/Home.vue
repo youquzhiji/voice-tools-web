@@ -100,7 +100,7 @@ export default class Home extends Vue
       font-size: 1.5em
 
   canvas
-    height: 100px
+    height: 200px
     width: 100%
     display: block
 
