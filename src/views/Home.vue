@@ -1,14 +1,16 @@
 <template>
   <div id="home">
     <div class="usage">
-      Welcome to the
+      Welcome to the voice training tool [TODO: 想一个名字]
+
+      <p>Drop an audio file below to start.</p>
     </div>
 
     <div class="drop-box unselectable" @dragover="(e) => e.preventDefault()" @drop="onDrop">
       <span class="drop-label">Drop Here</span>
     </div>
 
-    <div class="waveform">
+    <div class="waveform" :style="{visibility: this.audio ? 'unset' : 'hidden'}">
       <canvas ref="canvas"></canvas>
     </div>
   </div>
@@ -26,10 +28,11 @@ export default class Home extends Vue
   }
 
   waveformCanvas!: WaveformCanvas
+  audio: AudioBuffer = null as never as AudioBuffer
 
   mounted()
   {
-    console.log('Hi')
+    console.log('Initializing Canvas...')
     this.waveformCanvas = new WaveformCanvas(this.$refs.canvas)
   }
 
@@ -55,22 +58,14 @@ export default class Home extends Vue
               `- Size: ${file.size}\n` +
               `- Type: ${file.type}`)
 
-          // TODO: Convert file on backend
-          // if (file.type != 'audio/wav')
-          // {
-          //   ElMessage.error(`Error: The file must be in .wav format, your file is ${file.type}`)
-          //   console.log('Incorrect file type, skipped.')
-          //   return
-          // }
-
           // Read file
+          // TODO: If file type is not supported, convert file on backend
           const buf = await file.arrayBuffer()
-          const audioContext = new AudioContext()
-          const audio = await audioContext.decodeAudioData(buf)
+          this.audio = await new AudioContext().decodeAudioData(buf)
 
-          this.waveformCanvas.drawAudio(audio)
+          this.waveformCanvas.drawAudio(this.audio)
 
-          console.log(audio)
+          console.log(this.audio)
 
         } else ElMessage.error(`Error: The item dropped must be a file, not a ${item.kind}`)
       }
@@ -100,11 +95,11 @@ export default class Home extends Vue
       font-size: 1.5em
 
   canvas
-    height: 200px
+    height: 150px
     width: 100%
     display: block
 
     border-radius: 10px
-    box-shadow: 0 2px 12px -2px rgb(0 0 0 / 10%)
+    //box-shadow: 0 2px 12px -2px rgb(0 0 0 / 10%)
     //box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)
 </style>
