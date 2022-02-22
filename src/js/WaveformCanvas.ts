@@ -40,8 +40,7 @@ export default class WaveformCanvas
         // Data points per pixel
         const pxLen = audio.length / this.w
 
-        console.log(data)
-
+        // Decoded audio data range from -1 to 1
         console.log(min, max)
 
         for (let x = 0; x < this.w; x++)
