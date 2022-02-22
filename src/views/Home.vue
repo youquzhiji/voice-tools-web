@@ -28,16 +28,20 @@ import SpectrogramCanvas from "@/js/SpectrogramCanvas";
 
 export default class Home extends Vue
 {
+  // Canvas HTML elements
   declare $refs: {
     wfCanvas: HTMLCanvasElement
     spCanvas: HTMLCanvasElement
   }
 
+  // Canvas controllers
   waveformCanvas!: WaveformCanvas
   spectrogramCanvas!: SpectrogramCanvas
 
+  // Audio (null if no audio is provided)
   audio: AudioBuffer = null as never as AudioBuffer
 
+  // Vue Lifecycle hook that runs after mount
   mounted()
   {
     // Initialize canvas
@@ -45,6 +49,7 @@ export default class Home extends Vue
     this.spectrogramCanvas = new SpectrogramCanvas(this.$refs.spCanvas)
   }
 
+  // Runs when the user drops an audio file over the drop area
   async onDrop(e: DragEvent)
   {
     // Prevent default behavior: Opening the file in a browser tab.
