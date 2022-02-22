@@ -1,33 +1,9 @@
+import CanvasController from "@/js/CanvasController";
+
 const waveColor = 'pink'
 
-export default class WaveformCanvas
+export default class WaveformCanvas extends CanvasController
 {
-    el: HTMLCanvasElement
-    ctx: CanvasRenderingContext2D
-
-    w: number
-    h: number
-
-    constructor(canvas: HTMLCanvasElement)
-    {
-        this.el = canvas
-        this.ctx = canvas.getContext("2d")!
-
-        // Fix: Allow setting canvas width and height using CSS
-        const canvasCss = window.getComputedStyle(canvas)
-        this.w = canvas.width = parseInt(canvasCss.width.replace('px', ''))
-        this.h = canvas.height = parseInt(canvasCss.height.replace('px', ''))
-
-        this.drawGrid()
-    }
-
-    drawGrid()
-    {
-        this.ctx.moveTo(0, this.h / 2)
-        this.ctx.lineTo(this.w, this.h / 2)
-        this.ctx.stroke()
-    }
-
     /**
      * Draw full audio
      *
