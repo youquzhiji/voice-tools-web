@@ -17,12 +17,20 @@
 <script lang="ts">
 import {ElMessage} from "element-plus";
 import {Vue} from "vue-class-component";
+import WaveformCanvas from "@/js/WaveformCanvas";
 
 export default class Home extends Vue
 {
+  declare $refs: {
+    canvas: HTMLCanvasElement
+  }
+
+  waveformCanvas!: WaveformCanvas
+
   mounted()
   {
     console.log('Hi')
+    this.waveformCanvas = new WaveformCanvas(this.$refs.canvas)
   }
 
   async onDrop(e: DragEvent)
@@ -58,11 +66,12 @@ export default class Home extends Vue
           // Read file
           const buf = await file.arrayBuffer()
           const audioContext = new AudioContext()
+          const audio = await audioContext.decodeAudioData(buf)
 
-          await audioContext.decodeAudioData(buf, (audio) =>
-          {
-            console.log(audio)
-          })
+          this.waveformCanvas.drawAudio(audio)
+
+          console.log(audio)
+
         } else ElMessage.error(`Error: The item dropped must be a file, not a ${item.kind}`)
       }
     }
@@ -95,5 +104,7 @@ export default class Home extends Vue
     width: 100%
     display: block
 
-    box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%)
+    border-radius: 10px
+    box-shadow: 0 2px 12px -2px rgb(0 0 0 / 10%)
+    //box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)
 </style>
