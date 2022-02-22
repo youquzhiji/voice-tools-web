@@ -10,11 +10,11 @@
       <span class="drop-label">Drop Here</span>
     </div>
 
-    <div class="waveform" :style="{visibility: this.audio ? 'unset' : 'hidden'}">
+    <div class="waveform" :style="{visibility: audio ? 'unset' : 'hidden'}">
       <canvas ref="wfCanvas"></canvas>
     </div>
 
-    <div class="spectrogram" :style="{visibility: this.audio ? 'unset' : 'hidden'}">
+    <div class="spectrogram" :style="{visibility: audio ? 'unset' : 'hidden'}">
       <canvas ref="spCanvas"></canvas>
     </div>
   </div>
