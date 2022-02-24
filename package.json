@@ -16,6 +16,7 @@
     "vue-router": "4"
   },
   "devDependencies": {
+    "@types/meyda": "^4.3.2",
     "@types/node": "^17.0.15",
     "@vitejs/plugin-vue": "^2.0.0",
     "sass": "^1.49.7",

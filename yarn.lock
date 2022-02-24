@@ -127,6 +127,11 @@
   resolved "https://registry.yarnpkg.com/@types/long/-/long-4.0.1.tgz#459c65fa1867dafe6a8f322c4c51695663cc55e9"
   integrity sha512-5tXH6Bx/kNGd3MgffdmP4dy2Z+G4eaXw0SE81Tq3BNadtnMR5/ySMzX4SLEzHJzSmPNn4HIdpQsBvXMUykr58w==
 
+"@types/meyda@^4.3.2":
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/@types/meyda/-/meyda-4.3.2.tgz#8af35267d092a2cca493d5a9c0d781719c6296fe"
+  integrity sha512-nCcSTz3+xOLRfVCbxMx1B/lCK8wOnRos4q6oIo08Bxim9JP29oQLeYcTARmzDj2IXyclZoxfehpYxOpTUF7/lQ==
+
 "@types/node-fetch@^2.1.2":
   version "2.6.1"
   resolved "https://registry.yarnpkg.com/@types/node-fetch/-/node-fetch-2.6.1.tgz#8f127c50481db65886800ef496f20bbf15518975"
