@@ -75,9 +75,11 @@ export default class Home extends Vue
           // Read file
           // TODO: If file type is not supported, convert file on backend
           const buf = await file.arrayBuffer()
-          this.audio = await new AudioContext().decodeAudioData(buf)
+          const ctx = new AudioContext()
+          this.audio = await ctx.decodeAudioData(buf)
 
           this.waveformCanvas.drawAudio(this.audio)
+          this.spectrogramCanvas.drawAudio(this.audio, ctx)
 
           console.log(this.audio)
 
