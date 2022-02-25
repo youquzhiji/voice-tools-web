@@ -20,6 +20,11 @@ $c-highlight: #ff7878
   -moz-user-select: none
   -ms-user-select: none
   user-select: none
+  -webkit-user-drag: none
+  -khtml-user-drag: none
+  -moz-user-drag: none
+  -o-user-drag: none
+  user-drag: none
 
 .unselectable
   @include unselectable
@@ -42,6 +47,10 @@ $c-highlight: #ff7878
 .fbox-h
   display: flex
   flex-flow: row
+
+.fcenter
+  align-content: center
+  justify-content: center
 
 .mw0
   min-width: 0

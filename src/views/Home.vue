@@ -1,10 +1,10 @@
 <template>
-  <div id="home" ref="el">
+  <div id="home" ref="el" class="fbox-v">
     <div class="usage">
       Welcome to the voice training tool [TODO: 想一个名字]
     </div>
 
-    <div class="drop-box unselectable" @dragover="(e) => e.preventDefault()" @drop="onDrop">
+    <div class="drop-box unselectable" @dragover="(e) => e.preventDefault()" @drop="onDrop" v-if="!audio">
       <span class="drop-label">Drop Here</span>
     </div>
 
@@ -12,13 +12,7 @@
       <canvas ref="wfCanvas"></canvas>
     </div>
 
-    <div class="spectrogram" :style="{visibility: audio ? 'unset' : 'hidden'}">
-      <canvas ref="spCanvas"></canvas>
-    </div>
-
-    <div class="ft-graph" ref="ft" id="ft">
-
-    </div>
+    <canvas ref="spCanvas" class="f-grow1" :style="{visibility: audio ? 'unset' : 'hidden'}"></canvas>
   </div>
 </template>
 
@@ -33,7 +27,6 @@ export default class Home extends Vue
   // Canvas HTML elements
   declare $refs: {
     el: HTMLElement
-    ft: HTMLElement
     wfCanvas: HTMLCanvasElement
     spCanvas: HTMLCanvasElement
   }
@@ -120,7 +113,7 @@ export default class Home extends Vue
       font-size: 1.5em
 
   canvas
-    height: 100px
+    height: 50px
     width: 100%
     display: block
 
@@ -129,5 +122,5 @@ export default class Home extends Vue
     //box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)
 
   .spectrogram > canvas
-    height: 600px
+    height: 100%
 </style>
