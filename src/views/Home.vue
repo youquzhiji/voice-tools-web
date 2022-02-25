@@ -14,12 +14,12 @@
       <canvas ref="wfCanvas"></canvas>
     </div>
 
-    <div class="ft-graph" ref="ft" id="ft">
-
-    </div>
-
     <div class="spectrogram" :style="{visibility: audio ? 'unset' : 'hidden'}">
       <canvas ref="spCanvas"></canvas>
+    </div>
+
+    <div class="ft-graph" ref="ft" id="ft">
+
     </div>
   </div>
 </template>
@@ -121,11 +121,14 @@ export default class Home extends Vue
       font-size: 1.5em
 
   canvas
-    height: 150px
+    height: 100px
     width: 100%
     display: block
 
     border-radius: 10px
     //box-shadow: 0 2px 12px -2px rgb(0 0 0 / 10%)
     //box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)
+
+  .spectrogram > canvas
+    height: 600px
 </style>

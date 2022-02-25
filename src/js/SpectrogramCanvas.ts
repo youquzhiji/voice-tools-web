@@ -78,27 +78,35 @@ export default class SpectrogramCanvas extends CanvasController
 
         console.log(min, max)
 
+        // Mapping i(y) - Input: pixel index y, Output: displayed index in array
+        // Displayed index range = i(y) to i(y + 1), non-inclusive
+        const binLen = spec[0].length
+        const logLen = Math.log2(binLen)
+        const yPxLen = binLen / this.h
+        const mappingLinear = (y: number) => y * yPxLen
+        const mappingLog = (y: number) => Math.floor(Math.pow(2, y / this.h * logLen))
+        const mapping = mappingLog
+
+        // Draw each pixel
         for (let x = 0; x < this.w; x++)
         {
             const d = spec[x]
-
-            // this.el.height = this.h = d.length
-            const pxLen = d.length / this.h
 
             const gradient = chroma.scale(['#000',
                 '#4F1879', '#B43A78', '#F98766', '#FCFAC0']);
 
             for (let y = 0; y < this.h; y++)
             {
-                const area = d.subarray(y * pxLen, (y + 1) * pxLen)
+                const [iCur, iNext] = [mapping(y), mapping(y + 1)]
+                const area = d.subarray(iCur, iNext == iCur ? iNext + 1 : iNext)
 
+                // Draw
                 this.ctx.beginPath()
-                this.ctx.strokeStyle = gradient((mean(area) - min) / range).toString()
-                this.ctx.moveTo(x, this.h - y)
-                this.ctx.lineTo(x + 1, this.h - y)
-                this.ctx.stroke()
+                this.ctx.fillStyle = gradient((mean(area) - min) / range).toString()
+                this.ctx.fillRect(x, this.h - y, 1, 1)
                 this.ctx.closePath()
             }
         }
     }
+
 }
