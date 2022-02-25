@@ -2,8 +2,6 @@
   <div id="home" ref="el">
     <div class="usage">
       Welcome to the voice training tool [TODO: 想一个名字]
-
-      <p>Drop an audio file below to start.</p>
     </div>
 
     <div class="drop-box unselectable" @dragover="(e) => e.preventDefault()" @drop="onDrop">
@@ -29,9 +27,6 @@ import {ElMessage} from "element-plus";
 import {Vue} from "vue-class-component";
 import WaveformCanvas from "@/js/WaveformCanvas";
 import SpectrogramCanvas from "@/js/SpectrogramCanvas";
-import meyda from 'meyda'
-import Plotly from 'plotly.js-dist-min'
-import * as tf from "@tensorflow/tfjs";
 
 export default class Home extends Vue
 {
