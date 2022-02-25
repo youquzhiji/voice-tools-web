@@ -33,35 +33,22 @@ function powerToDb(ps: Float32Array[], aMin: number = 1e-10, maxDb: number = 80)
 }
 
 /**
- * Calculate fft spectrogram
- *
- * (Please set meyda.sampleRate before calling this)
+ * Calculate stft spectrogram
  *
  * @param data Decoded audio waveform data
  * @param hopLen Hop length
  * @param winLen Window length (aka. n_fft)
  */
-function spectrogram(data: Float32Array, hopLen: number = 512, winLen: number = 2048): Float32Array[]
+async function stft(data: Float32Array, hopLen: number = 512, winLen: number = 2048): Promise<Float32Array[]>
 {
-    const l = data.length
-    console.log(l / hopLen);
+    const stft = tf.signal.stft(tf.tensor1d(data), winLen, hopLen).abs()
+    const array1d = await stft.data() as never as Float32Array
     const out = []
 
-    meyda.bufferSize = winLen
-    let previous = data.subarray(0, winLen)
+    const [xLen, yLen] = stft.shape
 
-    // Loop through windows
-    for (let i = 0; i < l - winLen; i += hopLen)
-    {
-        // Get window subarray
-        const win = data.subarray(i, i + winLen)
-
-        // Compute FFT
-        const fft = meyda.extract(['powerSpectrum'], win, previous)!.powerSpectrum!
-        out.push(fft)
-
-        previous = win
-    }
+    for (let i = 0; i < xLen; i++)
+        out.push(array1d.subarray(i * yLen, (i + 1) * yLen))
 
     return out
 }
@@ -79,7 +66,7 @@ export default class SpectrogramCanvas extends CanvasController
         meyda.sampleRate = 16000
         meyda.bufferSize = 2048
         // const d = meyda.extract(['amplitudeSpectrum'], audio.getChannelData(0).subarray(0, 2048))!.amplitudeSpectrum!
-        const spec = spectrogram(audio.getChannelData(0))
+        const spec = stft(audio.getChannelData(0))
 
         await Plotly.newPlot('ft', [{y: spec[0]}],
                 {height: 300, margin: {t: 0, b: 20, l: 10, r: 0}})
