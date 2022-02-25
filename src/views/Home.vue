@@ -116,8 +116,6 @@ export default class Home extends Vue
     height: 50px
     width: 100%
     display: block
-
-    border-radius: 10px
     //box-shadow: 0 2px 12px -2px rgb(0 0 0 / 10%)
     //box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)
 

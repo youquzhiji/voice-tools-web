@@ -103,8 +103,9 @@ export default class SpectrogramCanvas extends CanvasController
         const img = this.ctx.createImageData(this.w, this.h)
         const imgA = img.data
         const w4 = this.w * 4
-        const gradient = new Gradient(chroma.scale(['#000',
+        const gradient = new Gradient(chroma.scale(['#232323',
             '#4F1879', '#B43A78', '#F98766', '#FCFAC0']), 1000);
+        // const gradient = new Gradient(chroma.scale(['#fff', '#ff7676', '#ff7676', '#ff2f2f']), 1000);
         for (let x = 0; x < this.w; x++)
         {
             const d = spec[x]
