@@ -45,7 +45,7 @@ export class Gradient
     g: Uint8Array
     b: Uint8Array
 
-    constructor(scale: chroma.Scale, resolution: number)
+    constructor(scale: chroma.Scale, resolution: number, logScale: boolean = true)
     {
         this.res = resolution
 
@@ -54,8 +54,17 @@ export class Gradient
         this.b = new Uint8Array(resolution + 1)
 
         // Precompute
-        for (let i = 0; i <= resolution; i++)
-            [this.r[i], this.g[i], this.b[i]] = scale(i / resolution).rgb()
+        if (logScale)
+        {
+            const logMax = Math.log2(resolution)
+            for (let i = 0; i <= resolution; i++)
+                [this.r[i], this.g[i], this.b[i]] = scale(Math.log2(i) / logMax).rgb()
+        }
+        else
+        {
+            for (let i = 0; i <= resolution; i++)
+                [this.r[i], this.g[i], this.b[i]] = scale(i / resolution).rgb()
+        }
     }
 
     /**
