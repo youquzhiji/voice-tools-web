@@ -12,7 +12,9 @@
       <canvas ref="wfCanvas"></canvas>
     </div>
 
-    <canvas ref="spCanvas" class="f-grow1" :style="{visibility: audio ? 'unset' : 'hidden'}"></canvas>
+    <div class="spectrogram f-grow1 fbox-v" :style="{visibility: audio ? 'unset' : 'hidden'}">
+      <canvas ref="spCanvas" style="min-height: 0"></canvas>
+    </div>
   </div>
 </template>
 
