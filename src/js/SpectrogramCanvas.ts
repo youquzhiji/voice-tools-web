@@ -1,9 +1,7 @@
 import CanvasController from "@/js/CanvasController";
 import * as tf from '@tensorflow/tfjs'
-import meyda from 'meyda'
 import chroma from "chroma-js";
-import {extremes, mean} from "@/js/Utils";
-import Plotly from "plotly.js-dist-min";
+import {extremes, Gradient, mean} from "@/js/Utils";
 
 /**
  * Convert power spectrum signal to decibel signal inspired by python's librosa library.
@@ -90,13 +88,12 @@ export default class SpectrogramCanvas extends CanvasController
         const img = this.ctx.createImageData(this.w, this.h)
         const imgA = img.data
         const w4 = this.w * 4
+        const gradient = new Gradient(chroma.scale(['#000',
+            '#4F1879', '#B43A78', '#F98766', '#FCFAC0']), 1000);
         for (let x = 0; x < this.w; x++)
         {
             const d = spec[x]
             const x4 = x * 4
-
-            const gradient = chroma.scale(['#000',
-                '#4F1879', '#B43A78', '#F98766', '#FCFAC0']);
 
             for (let y = 0; y < this.h; y++)
             {
@@ -105,11 +102,8 @@ export default class SpectrogramCanvas extends CanvasController
                 const area = d.subarray(iCur, iNext == iCur ? iNext + 1 : iNext)
 
                 // Draw
-                const [r, g, b] = gradient((mean(area) - min) / range).rgb()
-                const i = (this.h - y) * w4 + x4
-                imgA[i] = r
-                imgA[i + 1] = g
-                imgA[i + 2] = b
+                const i = (this.h - y) * w4 + x4;
+                [imgA[i], imgA[i + 1], imgA[i + 2]] = gradient.get((mean(area) - min) / range)
                 imgA[i + 3] = 255
 
                 // this.ctx.beginPath()

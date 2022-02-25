@@ -1,3 +1,5 @@
+import chroma from "chroma-js";
+
 type NumberArray = Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array |
     Float32Array | Float64Array | number[] | Array<number>
 
@@ -31,4 +33,39 @@ export function extremes(a: NumberArray): [number, number]
     }
 
     return [min, max]
+}
+
+/**
+ * Precomputed gradient optimized for pixel drawing
+ */
+export class Gradient
+{
+    res: number
+    r: Uint8Array
+    g: Uint8Array
+    b: Uint8Array
+
+    constructor(scale: chroma.Scale, resolution: number)
+    {
+        this.res = resolution
+
+        this.r = new Uint8Array(resolution + 1)
+        this.g = new Uint8Array(resolution + 1)
+        this.b = new Uint8Array(resolution + 1)
+
+        // Precompute
+        for (let i = 0; i <= resolution; i++)
+            [this.r[i], this.g[i], this.b[i]] = scale(i / resolution).rgb()
+    }
+
+    /**
+     * Get RGB
+     *
+     * @param ratio Color ratio (0 - 1)
+     */
+    get(ratio: number)
+    {
+        const i = Math.round(ratio * this.res)
+        return [this.r[i], this.g[i], this.b[i]]
+    }
 }
