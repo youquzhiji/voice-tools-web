@@ -14,7 +14,7 @@
       <canvas ref="wfCanvas"></canvas>
     </div>
 
-    <div class="ft-graph" ref="ft">
+    <div class="ft-graph" ref="ft" id="ft">
 
     </div>
 
@@ -31,6 +31,7 @@ import WaveformCanvas from "@/js/WaveformCanvas";
 import SpectrogramCanvas from "@/js/SpectrogramCanvas";
 import meyda from 'meyda'
 import Plotly from 'plotly.js-dist-min'
+import * as tf from "@tensorflow/tfjs";
 
 export default class Home extends Vue
 {
@@ -84,24 +85,36 @@ export default class Home extends Vue
     const buf = await file.arrayBuffer()
     const ctx = new AudioContext({sampleRate: 16000})
     this.audio = await ctx.decodeAudioData(buf)
+    const data = this.audio.getChannelData(0)
 
     console.log(`Audio Loaded:\n` +
         `- Sample Rate: ${this.audio.sampleRate} Hz\n` +
         `- Array Length: ${this.audio.length}\n` +
         `- Duration: ${this.audio.duration} sec\n` +
         `- Number of Channels: ${this.audio.numberOfChannels}\n`)
-    console.log(this.audio.getChannelData(0))
+    console.log(data)
 
     this.waveformCanvas.drawAudio(this.audio)
-    this.spectrogramCanvas.drawAudio(this.audio, ctx)
+    // this.spectrogramCanvas.drawAudio(this.audio, ctx)
+
+    const stft = tf.signal.stft(tf.tensor1d(data), 2048, 512).abs()
+    console.log(stft);
+    // @ts-ignore
+    await Plotly.newPlot(this.$refs.ft, [{y: await stft.gather([28]).data()}],
+        {height: 300, margin: {t: 0, b: 20, l: 20, r: 0}})
 
     // Test
-    meyda.sampleRate = 16000
-    meyda.bufferSize = 2048
-    const d = meyda.extract(['amplitudeSpectrum'], this.audio.getChannelData(0).subarray(0, 2048))
-    console.log(d!.amplitudeSpectrum!)
-    await Plotly.newPlot(this.$refs.ft, [{y: d!.amplitudeSpectrum!}],
-        {height: 300, margin: {t: 0, b: 20, l: 10, r: 0}})
+    // meyda.sampleRate = 16000
+    // meyda.bufferSize = 2048
+    // const d = meyda.extract(['amplitudeSpectrum'], data.subarray(0, 2048))
+    // console.log(d!.amplitudeSpectrum!)
+    //
+    // const mfcc = meyda.extract('mfcc', data.subarray(0, 2048))!.mfcc!
+    // console.log(mfcc)
+    // await Plotly.newPlot(this.$refs.ft, [{y: d!.amplitudeSpectrum!}, {y: mfcc}],
+    //     {height: 300, margin: {t: 0, b: 20, l: 10, r: 0}})
+    // await Plotly.newPlot(this.$refs.el, [{y: mfcc}],
+    //     {height: 300, margin: {t: 0, b: 20, l: 10, r: 0}})
   }
 }
 </script>
