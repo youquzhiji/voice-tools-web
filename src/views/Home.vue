@@ -63,45 +63,45 @@ export default class Home extends Vue
     // Prevent default behavior: Opening the file in a browser tab.
     e.preventDefault()
 
-    // Read file data
-    if (e.dataTransfer && e.dataTransfer.items)
-    {
-      // Loop through all files
-      for (let i = 0; i < e.dataTransfer.items.length; i++)
-      {
-        // Check file type
-        const item = e.dataTransfer.items[i]
-        if (item.kind == 'file')
-        {
-          const file = item.getAsFile()!
+    // Check files dropped
+    if (!(e.dataTransfer && e.dataTransfer.items)) return
+    const len = e.dataTransfer.items.length
+    if (len > 1) return ElMessage.error(`Only one file can be analyzed at a time, you dropped ${len}`)
 
-          console.log(`File Dropped: ${file.name}\n` +
-              `- LastModified: ${file.lastModified}\n` +
-              `- Size: ${file.size}\n` +
-              `- Type: ${file.type}`)
+    // Check file type
+    const item = e.dataTransfer.items[0]
+    if (item.kind != 'file') return ElMessage.error(`Error: The item dropped must be a file, not a ${item.kind}`)
 
-          // Read file
-          // TODO: If file type is not supported, convert file on backend
-          const buf = await file.arrayBuffer()
-          const ctx = new AudioContext({sampleRate: 16000})
-          this.audio = await ctx.decodeAudioData(buf)
+    const file = item.getAsFile()!
 
-          console.log(this.audio)
-          console.log(this.audio.getChannelData(0))
+    console.log(`File Dropped: ${file.name}\n` +
+        `- LastModified: ${file.lastModified}\n` +
+        `- Size: ${file.size}\n` +
+        `- Type: ${file.type}`)
 
-          this.waveformCanvas.drawAudio(this.audio)
-          this.spectrogramCanvas.drawAudio(this.audio, ctx)
+    // Read file
+    // TODO: If file type is not supported, convert file on backend
+    const buf = await file.arrayBuffer()
+    const ctx = new AudioContext({sampleRate: 16000})
+    this.audio = await ctx.decodeAudioData(buf)
 
-          // Test
-          meyda.sampleRate = 16000
-          meyda.bufferSize = 2048
-          const d = meyda.extract(['amplitudeSpectrum'], this.audio.getChannelData(0).subarray(0, 2048))
-          console.log(d!.amplitudeSpectrum!)
-          Plotly.newPlot(this.$refs.ft, [{y: d!.amplitudeSpectrum!}], {height: 300, margin: {t: 0, b: 20, l: 10, r: 0}})
+    console.log(`Audio Loaded:\n` +
+        `- Sample Rate: ${this.audio.sampleRate} Hz\n` +
+        `- Array Length: ${this.audio.length}\n` +
+        `- Duration: ${this.audio.duration} sec\n` +
+        `- Number of Channels: ${this.audio.numberOfChannels}\n`)
+    console.log(this.audio.getChannelData(0))
 
-        } else ElMessage.error(`Error: The item dropped must be a file, not a ${item.kind}`)
-      }
-    }
+    this.waveformCanvas.drawAudio(this.audio)
+    this.spectrogramCanvas.drawAudio(this.audio, ctx)
+
+    // Test
+    meyda.sampleRate = 16000
+    meyda.bufferSize = 2048
+    const d = meyda.extract(['amplitudeSpectrum'], this.audio.getChannelData(0).subarray(0, 2048))
+    console.log(d!.amplitudeSpectrum!)
+    await Plotly.newPlot(this.$refs.ft, [{y: d!.amplitudeSpectrum!}],
+        {height: 300, margin: {t: 0, b: 20, l: 10, r: 0}})
   }
 }
 </script>
