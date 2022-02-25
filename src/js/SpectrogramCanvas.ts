@@ -64,8 +64,6 @@ export default class SpectrogramCanvas extends CanvasController
     {
         let start = performance.now()
 
-        meyda.sampleRate = 16000
-        meyda.bufferSize = 2048
         const spec = await stft(audio.getChannelData(0))
 
         console.log(`stft calculation done: ${performance.now() - start} ms`)
@@ -91,7 +89,6 @@ export default class SpectrogramCanvas extends CanvasController
         // Draw each pixel
         const img = this.ctx.createImageData(this.w, this.h)
         const imgA = img.data
-        imgA[2048] = 255
         const w4 = this.w * 4
         for (let x = 0; x < this.w; x++)
         {
@@ -103,7 +100,8 @@ export default class SpectrogramCanvas extends CanvasController
 
             for (let y = 0; y < this.h; y++)
             {
-                const [iCur, iNext] = [mapping[y], mapping[y + 1]]
+                const iCur = mapping[y]
+                const iNext = mapping[y + 1]
                 const area = d.subarray(iCur, iNext == iCur ? iNext + 1 : iNext)
 
                 // Draw
