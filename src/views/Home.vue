@@ -1,5 +1,5 @@
 <template>
-  <div id="home">
+  <div id="home" ref="el">
     <div class="usage">
       Welcome to the voice training tool [TODO: 想一个名字]
 
@@ -14,6 +14,10 @@
       <canvas ref="wfCanvas"></canvas>
     </div>
 
+    <div class="ft-graph" ref="ft">
+
+    </div>
+
     <div class="spectrogram" :style="{visibility: audio ? 'unset' : 'hidden'}">
       <canvas ref="spCanvas"></canvas>
     </div>
@@ -25,11 +29,15 @@ import {ElMessage} from "element-plus";
 import {Vue} from "vue-class-component";
 import WaveformCanvas from "@/js/WaveformCanvas";
 import SpectrogramCanvas from "@/js/SpectrogramCanvas";
+import meyda from 'meyda'
+import Plotly from 'plotly.js-dist-min'
 
 export default class Home extends Vue
 {
   // Canvas HTML elements
   declare $refs: {
+    el: HTMLElement
+    ft: HTMLElement
     wfCanvas: HTMLCanvasElement
     spCanvas: HTMLCanvasElement
   }
@@ -75,13 +83,21 @@ export default class Home extends Vue
           // Read file
           // TODO: If file type is not supported, convert file on backend
           const buf = await file.arrayBuffer()
-          const ctx = new AudioContext()
+          const ctx = new AudioContext({sampleRate: 16000})
           this.audio = await ctx.decodeAudioData(buf)
+
+          console.log(this.audio)
+          console.log(this.audio.getChannelData(0))
 
           this.waveformCanvas.drawAudio(this.audio)
           this.spectrogramCanvas.drawAudio(this.audio, ctx)
 
-          console.log(this.audio)
+          // Test
+          meyda.sampleRate = 16000
+          meyda.bufferSize = 2048
+          const d = meyda.extract(['amplitudeSpectrum'], this.audio.getChannelData(0).subarray(0, 2048))
+          console.log(d!.amplitudeSpectrum!)
+          Plotly.newPlot(this.$refs.ft, [{y: d!.amplitudeSpectrum!}], {height: 300, margin: {t: 0, b: 20, l: 10, r: 0}})
 
         } else ElMessage.error(`Error: The item dropped must be a file, not a ${item.kind}`)
       }
