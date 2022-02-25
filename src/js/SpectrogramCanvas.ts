@@ -59,16 +59,14 @@ export default class SpectrogramCanvas extends CanvasController
      * Draw full audio
      *
      * @param audio Full decoded audio
-     * @param audioCtx
      */
-    async drawAudio(audio: AudioBuffer, audioCtx: AudioContext)
+    async drawAudio(audio: AudioBuffer)
     {
         meyda.sampleRate = 16000
         meyda.bufferSize = 2048
-        // const d = meyda.extract(['amplitudeSpectrum'], audio.getChannelData(0).subarray(0, 2048))!.amplitudeSpectrum!
-        const spec = stft(audio.getChannelData(0))
+        const spec = await stft(audio.getChannelData(0))
 
-        await Plotly.newPlot('ft', [{y: spec[0]}],
+        await Plotly.newPlot('ft', [{y: spec[28]}],
                 {height: 300, margin: {t: 0, b: 20, l: 10, r: 0}})
 
         this.el.width = this.w = spec.length
