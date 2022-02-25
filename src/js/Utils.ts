@@ -19,7 +19,7 @@ export function mean(arr: NumberArray): number
  * @param a Array
  * @return [min, max]
  */
-function extremes(a: NumberArray): [number, number]
+export function extremes(a: NumberArray): [number, number]
 {
     let min = a[0]
     let max = a[0]

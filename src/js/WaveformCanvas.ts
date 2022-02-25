@@ -1,4 +1,5 @@
 import CanvasController from "@/js/CanvasController";
+import {extremes} from "@/js/Utils";
 
 const waveColor = 'pink'
 
@@ -21,14 +22,12 @@ export default class WaveformCanvas extends CanvasController
         for (let x = 0; x < this.w; x++)
         {
             // Compute min and max for each pixel region
-            const area = data.slice(x * pxLen, (x + 1) * pxLen).sort()
-            const aMin = area[0]
-            const aMax = area[area.length - 1]
+            const [min, max] = extremes(data.subarray(x * pxLen, (x + 1) * pxLen))
 
             // Draw line
             this.ctx.strokeStyle = waveColor
-            this.ctx.moveTo(x, hh - aMax * hh)
-            this.ctx.lineTo(x, hh - aMin * hh)
+            this.ctx.moveTo(x, hh - max * hh)
+            this.ctx.lineTo(x, hh - min * hh)
             this.ctx.stroke()
         }
     }
