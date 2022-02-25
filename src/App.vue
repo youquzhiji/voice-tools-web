@@ -37,7 +37,6 @@ import {Back} from "@element-plus/icons-vue";
   flex-direction: column
   height: 100%
 
-  max-width: 600px
   margin: auto
 
 // Navigation bar
