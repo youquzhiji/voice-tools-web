@@ -66,26 +66,22 @@ export default class SpectrogramCanvas extends CanvasController
         meyda.bufferSize = 2048
         const spec = await stft(audio.getChannelData(0))
 
-        await Plotly.newPlot('ft', [{y: spec[28]}],
-                {height: 300, margin: {t: 0, b: 20, l: 10, r: 0}})
-
         this.el.width = this.w = spec.length
         // const xPxLen = d.length / this.w
 
-        console.log(spec);
         const [min, max] = extremes(spec.flatMap(it => extremes(it)))
         const range = max - min
-
-        console.log(min, max)
 
         // Mapping i(y) - Input: pixel index y, Output: displayed index in array
         // Displayed index range = i(y) to i(y + 1), non-inclusive
         const binLen = spec[0].length
         const logLen = Math.log2(binLen)
-        const yPxLen = binLen / this.h
+        const [yPxLen, logPxLen] = [binLen / this.h, logLen / this.h]
         const mappingLinear = (y: number) => y * yPxLen
-        const mappingLog = (y: number) => Math.floor(Math.pow(2, y / this.h * logLen))
-        const mapping = mappingLog
+        const mappingLog = (y: number) => Math.floor(Math.pow(2, y * logPxLen))
+
+        // Precompute mapping
+        const mapping = Array.from(Array(this.h).keys()).map(i => mappingLog(i))
 
         // Draw each pixel
         for (let x = 0; x < this.w; x++)
@@ -97,7 +93,7 @@ export default class SpectrogramCanvas extends CanvasController
 
             for (let y = 0; y < this.h; y++)
             {
-                const [iCur, iNext] = [mapping(y), mapping(y + 1)]
+                const [iCur, iNext] = [mapping[y], mapping[y + 1]]
                 const area = d.subarray(iCur, iNext == iCur ? iNext + 1 : iNext)
 
                 // Draw
