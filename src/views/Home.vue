@@ -97,6 +97,10 @@ export default class Home extends Vue
 
 <style lang="sass" scoped>
 #home
+  width: 100%
+  max-width: 600px
+  margin: auto
+
   * + *
     margin-top: 20px
 
