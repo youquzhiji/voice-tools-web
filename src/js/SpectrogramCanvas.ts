@@ -31,6 +31,21 @@ function powerToDb(ps: Float32Array[], aMin: number = 1e-10, maxDb: number = 80)
 }
 
 /**
+ * Convert FFT output bins (y-axis index) to frequencies
+ *
+ * @param winLen Integer, window length
+ * @param sampleRate Sample rate
+ */
+function binToFreq(winLen: number, sampleRate: number): Float32Array
+{
+    const multiplier = 1 / (winLen * (1 / sampleRate))
+    const bins = winLen / 2 + 1
+    const arr = new Float32Array(bins)
+    for (let i = 0; i < bins; i++) arr[i] = i * multiplier
+    return arr
+}
+
+/**
  * Calculate stft spectrogram
  *
  * @param data Decoded audio waveform data
