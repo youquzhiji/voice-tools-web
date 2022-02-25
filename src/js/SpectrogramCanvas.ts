@@ -62,9 +62,14 @@ export default class SpectrogramCanvas extends CanvasController
      */
     async drawAudio(audio: AudioBuffer)
     {
+        let start = performance.now()
+
         meyda.sampleRate = 16000
         meyda.bufferSize = 2048
         const spec = await stft(audio.getChannelData(0))
+
+        console.log(`stft calculation done: ${performance.now() - start} ms`)
+        start = performance.now()
 
         this.el.width = this.w = spec.length
         // const xPxLen = d.length / this.w
@@ -84,9 +89,14 @@ export default class SpectrogramCanvas extends CanvasController
         const mapping = Array.from(Array(this.h).keys()).map(i => mappingLog(i))
 
         // Draw each pixel
+        const img = this.ctx.createImageData(this.w, this.h)
+        const imgA = img.data
+        imgA[2048] = 255
+        const w4 = this.w * 4
         for (let x = 0; x < this.w; x++)
         {
             const d = spec[x]
+            const x4 = x * 4
 
             const gradient = chroma.scale(['#000',
                 '#4F1879', '#B43A78', '#F98766', '#FCFAC0']);
@@ -97,12 +107,22 @@ export default class SpectrogramCanvas extends CanvasController
                 const area = d.subarray(iCur, iNext == iCur ? iNext + 1 : iNext)
 
                 // Draw
-                this.ctx.beginPath()
-                this.ctx.fillStyle = gradient((mean(area) - min) / range).toString()
-                this.ctx.fillRect(x, this.h - y, 1, 1)
-                this.ctx.closePath()
+                const [r, g, b] = gradient((mean(area) - min) / range).rgb()
+                const i = (this.h - y) * w4 + x4
+                imgA[i] = r
+                imgA[i + 1] = g
+                imgA[i + 2] = b
+                imgA[i + 3] = 255
+
+                // this.ctx.beginPath()
+                // this.ctx.fillStyle = gradient((mean(area) - min) / range).toString()
+                // this.ctx.fillRect(x, this.h - y, 1, 1)
+                // this.ctx.closePath()
             }
         }
+        this.ctx.putImageData(img, 0, 0)
+
+        console.log(`drawing done: ${performance.now() - start} ms`)
     }
 
 }
