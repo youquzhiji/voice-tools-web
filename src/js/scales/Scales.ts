@@ -1,10 +1,10 @@
 
-export function hzToMel(hz: number)
+export function hzToMel(hz: number): number
 {
     return 2595 * Math.log10(1 + hz / 700)
 }
 
-export function melToHz(mel: number)
+export function melToHz(mel: number): number
 {
     return 700 * Math.pow(mel / 2595, 10) - 1
 }
@@ -22,4 +22,9 @@ export function binToFreq(winLen: number, sampleRate: number): Float32Array
     const arr = new Float32Array(bins)
     for (let i = 0; i < bins; i++) arr[i] = i * multiplier
     return arr
+
+/**
+ * Tick: [numeric value, percentage position]
+ */
+export type Ticks = [number, number][]
 }

@@ -12,8 +12,12 @@
       <canvas ref="wfCanvas"></canvas>
     </div>
 
-    <div class="spectrogram f-grow1 fbox-v" :style="{visibility: audio ? 'unset' : 'hidden'}">
+    <div class="spectrogram f-grow1 fbox-h" :style="{visibility: audio ? 'unset' : 'hidden'}">
       <canvas ref="spCanvas" style="min-height: 0"></canvas>
+<!--      <div class="x-ticks fbox-vcenter">Time</div>-->
+      <div class="y-ticks" v-if="ticks">
+        <div class="tick" v-for="t of ticks" :style="{top: `${(1 - t[1]) * 100}%`}">- {{numberFormat.format(t[0])}}</div>
+      </div>
     </div>
   </div>
 </template>
@@ -23,6 +27,7 @@ import {ElMessage} from "element-plus";
 import {Vue} from "vue-class-component";
 import WaveformCanvas from "@/js/WaveformCanvas";
 import SpectrogramCanvas from "@/js/SpectrogramCanvas";
+import {Ticks} from "@/js/scales/Scales";
 
 export default class Home extends Vue
 {
@@ -39,6 +44,9 @@ export default class Home extends Vue
 
   // Audio (null if no audio is provided)
   audio: AudioBuffer = null as never as AudioBuffer
+  ticks: Ticks = null as never as Ticks
+
+  numberFormat = Intl.NumberFormat('en-US', {notation: "compact", maximumFractionDigits: 1})
 
   // Vue Lifecycle hook that runs after mount
   mounted()
@@ -123,4 +131,27 @@ export default class Home extends Vue
 
   .spectrogram > canvas
     height: 100%
+
+  .x-ticks
+    width: 100%
+    background: #232323
+    color: lightgray
+    height: 30px
+    position: relative
+
+  .y-ticks
+    margin-top: 1px
+    background: #232323
+    color: lightgray
+    position: relative
+    width: 30px
+
+    font-size: 10px
+    text-align: left
+
+    .tick
+      position: absolute
+      white-space: nowrap
+      overflow: hidden
+
 </style>
