@@ -2,6 +2,7 @@ import CanvasController from "@/js/CanvasController";
 import * as tf from '@tensorflow/tfjs'
 import chroma from "chroma-js";
 import {extremes, Gradient, mean} from "@/js/Utils";
+import {hzToMel, melToHz, ticksLinear} from "@/js/scales/Scales";
 
 /**
  * Convert power spectrum signal to decibel signal inspired by python's librosa library.
@@ -77,12 +78,14 @@ export default class SpectrogramCanvas extends CanvasController
         // Displayed index range = i(y) to i(y + 1), non-inclusive
         const binLen = spec[0].length
         const logLen = Math.log2(binLen)
+        // const melLen = hzToMel()
         const [yPxLen, logPxLen] = [binLen / this.h, logLen / this.h]
         const mappingLinear = (y: number) => y * yPxLen
         const mappingLog = (y: number) => Math.floor(Math.pow(2, y * logPxLen))
+        // const mappingMel = ;
 
         // Precompute mapping
-        const mapping = Array.from(Array(this.h).keys()).map(i => mappingLog(i))
+        const mapping = Array.from(Array(this.h).keys()).map(i => mappingLinear(i))
 
         // Draw each pixel
         const img = this.ctx.createImageData(this.w, this.h)
@@ -116,6 +119,7 @@ export default class SpectrogramCanvas extends CanvasController
         this.ctx.putImageData(img, 0, 0)
 
         console.log(`drawing done: ${performance.now() - start} ms`)
-    }
 
+        return ticksLinear(this.h, 0, audio.sampleRate / 2)
+    }
 }

@@ -95,7 +95,8 @@ export default class Home extends Vue
     console.log(data)
 
     this.waveformCanvas.drawAudio(this.audio)
-    await this.spectrogramCanvas.drawAudio(this.audio)
+    this.ticks = await this.spectrogramCanvas.drawAudio(this.audio)
+    console.log(this.ticks)
   }
 }
 </script>
