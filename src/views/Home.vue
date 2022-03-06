@@ -150,6 +150,7 @@ export default class Home extends Vue
 
     font-size: 10px
     text-align: left
+    overflow-y: hidden
 
     .tick
       position: absolute
