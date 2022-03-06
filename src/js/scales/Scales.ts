@@ -1,4 +1,3 @@
-
 export function hzToMel(hz: number): number
 {
     return 2595 * Math.log10(1 + hz / 700)
@@ -6,7 +5,7 @@ export function hzToMel(hz: number): number
 
 export function melToHz(mel: number): number
 {
-    return 700 * Math.pow(mel / 2595, 10) - 1
+    return 700 * (Math.pow(10, mel / 2595) - 1)
 }
 
 /**
