@@ -16,7 +16,9 @@
       <canvas ref="spCanvas" style="min-height: 0"></canvas>
 <!--      <div class="x-ticks fbox-vcenter">Time</div>-->
       <div class="y-ticks" v-if="ticks">
-        <div class="tick" v-for="t of ticks" :style="{top: `${(1 - t[1]) * 100}%`}">- {{numberFormat.format(t[0])}}</div>
+        <div class="tick unselectable fbox-h fcenter" v-for="t of ticks" :style="{top: `${(1 - t[1]) * 100}%`}">
+          <div class="tick-line"></div> {{numberFormat.format(t[0])}}
+        </div>
       </div>
     </div>
   </div>
@@ -153,5 +155,11 @@ export default class Home extends Vue
       position: absolute
       white-space: nowrap
       overflow: hidden
+      margin-top: -6px
 
+      .tick-line
+        width: 4px
+        height: 1px
+        background-color: lightgray
+        margin-right: 2px
 </style>
