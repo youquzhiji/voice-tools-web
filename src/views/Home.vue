@@ -104,7 +104,7 @@ export default class Home extends Vue
   max-width: 600px
   margin: auto
 
-  * + *
+  > * + *
     margin-top: 20px
 
   .drop-box
