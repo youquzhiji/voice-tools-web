@@ -28,11 +28,11 @@ export default class Spectrogram extends Vue {
   numberFormat = Intl.NumberFormat('en-US', {notation: "compact", maximumFractionDigits: 1})
   ticks: Ticks = null as never as Ticks
 
-  async mounted()
+  mounted()
   {
     console.log('Spectrogram mounting...')
     this.spectrogramCanvas = new SpectrogramCanvas(this.$refs.spCanvas)
-    this.ticks = await this.spectrogramCanvas.drawAudio(this.audio)
+    this.spectrogramCanvas.drawAudio(this.audio).then(it => this.ticks = it)
     console.log('Spectrogram mounted!')
   }
 }

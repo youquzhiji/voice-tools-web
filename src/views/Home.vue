@@ -10,15 +10,16 @@
 
     <div class="results" :style="{visibility: audio ? 'unset' : 'hidden'}">
       <Waveform :audio="audio" v-if="audio" />
-      
-      <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
-        <el-tab-pane label="User" name="first">User</el-tab-pane>
-        <el-tab-pane label="Config" name="second">Config</el-tab-pane>
-        <el-tab-pane label="Role" name="third">Role</el-tab-pane>
-        <el-tab-pane label="Task" name="fourth">Task</el-tab-pane>
-      </el-tabs>
 
-      <Spectrogram :audio="audio" v-if="audio" />
+      <div class="result-tabs">
+        <div class="tab-button" @click="() => activeTab = 1">Spectrogram</div>
+        <div class="tab-button" @click="() => activeTab = 2">Classification</div>
+        <div class="tab-button" @click="() => activeTab = 3">Pitch & Formant</div>
+      </div>
+
+      <div class="result-tab" v-if="activeTab === 1">
+        <Spectrogram :audio="audio" v-if="audio" />
+      </div>
     </div>
   </div>
 </template>
@@ -39,13 +40,7 @@ export default class Home extends Vue
 
   // Audio (null if no audio is provided)
   audio: AudioBuffer = null as never as AudioBuffer
-
-  activeName = 'first'
-
-  handleClick(tab: TabsPaneContext, event: Event)
-  {
-    console.log(tab, event)
-  }
+  activeTab = 1
 
   // Runs when the user drops an audio file over the drop area
   async onDrop(e: DragEvent)
@@ -88,9 +83,7 @@ export default class Home extends Vue
 
 <style lang="sass" scoped>
 #home
-  width: 100%
-  max-width: 600px
-  margin: auto
+  margin: 0 20px 0
 
   > * + *
     margin-top: 20px
@@ -110,7 +103,7 @@ export default class Home extends Vue
       color: gray
       font-size: 1.5em
 
-  .results
+  .results, .result-tab
     display: flex
     flex-direction: column
     flex: 1
