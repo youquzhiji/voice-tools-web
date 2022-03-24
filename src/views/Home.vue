@@ -8,16 +8,25 @@
       <span class="drop-label">Drop Here</span>
     </div>
 
-    <div class="waveform" :style="{visibility: audio ? 'unset' : 'hidden'}">
-      <canvas ref="wfCanvas"></canvas>
-    </div>
+    <div class="results" :style="{visibility: audio ? 'unset' : 'hidden'}">
+      <div class="waveform">
+        <canvas ref="wfCanvas"></canvas>
+      </div>
 
-    <div class="spectrogram f-grow1 fbox-h" :style="{visibility: audio ? 'unset' : 'hidden'}">
-      <canvas ref="spCanvas" style="min-height: 0"></canvas>
-<!--      <div class="x-ticks fbox-vcenter">Time</div>-->
-      <div class="y-ticks" v-if="ticks">
-        <div class="tick unselectable fbox-h" v-for="t of ticks" :style="{top: `${(1 - t[1]) * 100}%`}">
-          <div class="tick-line"></div> {{numberFormat.format(t[0])}}
+      <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
+        <el-tab-pane label="User" name="first">User</el-tab-pane>
+        <el-tab-pane label="Config" name="second">Config</el-tab-pane>
+        <el-tab-pane label="Role" name="third">Role</el-tab-pane>
+        <el-tab-pane label="Task" name="fourth">Task</el-tab-pane>
+      </el-tabs>
+
+      <div class="spectrogram f-grow1 fbox-h">
+        <canvas ref="spCanvas" style="min-height: 0"></canvas>
+        <!--      <div class="x-ticks fbox-vcenter">Time</div>-->
+        <div class="y-ticks" v-if="ticks">
+          <div class="tick unselectable fbox-h" v-for="t of ticks" :style="{top: `${(1 - t[1]) * 100}%`}">
+            <div class="tick-line"></div> {{numberFormat.format(t[0])}}
+          </div>
         </div>
       </div>
     </div>
@@ -25,7 +34,7 @@
 </template>
 
 <script lang="ts">
-import {ElMessage} from "element-plus";
+import {ElMessage, TabsPaneContext} from "element-plus";
 import {Vue} from "vue-class-component";
 import WaveformCanvas from "@/js/WaveformCanvas";
 import SpectrogramCanvas from "@/js/SpectrogramCanvas";
@@ -47,6 +56,13 @@ export default class Home extends Vue
   // Audio (null if no audio is provided)
   audio: AudioBuffer = null as never as AudioBuffer
   ticks: Ticks = null as never as Ticks
+
+  activeName = 'first'
+
+  handleClick(tab: TabsPaneContext, event: Event)
+  {
+    console.log(tab, event)
+  }
 
   numberFormat = Intl.NumberFormat('en-US', {notation: "compact", maximumFractionDigits: 1})
 
@@ -124,6 +140,12 @@ export default class Home extends Vue
     .drop-label
       color: gray
       font-size: 1.5em
+
+  .results
+    display: flex
+    flex-direction: column
+    flex: 1
+    min-height: 0
 
   canvas
     height: 50px
