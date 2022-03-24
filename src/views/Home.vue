@@ -20,42 +20,33 @@
         <el-tab-pane label="Task" name="fourth">Task</el-tab-pane>
       </el-tabs>
 
-      <div class="spectrogram f-grow1 fbox-h">
-        <canvas ref="spCanvas" style="min-height: 0"></canvas>
-        <!--      <div class="x-ticks fbox-vcenter">Time</div>-->
-        <div class="y-ticks" v-if="ticks">
-          <div class="tick unselectable fbox-h" v-for="t of ticks" :style="{top: `${(1 - t[1]) * 100}%`}">
-            <div class="tick-line"></div> {{numberFormat.format(t[0])}}
-          </div>
-        </div>
-      </div>
+      <Spectrogram :audio="audio" v-if="audio" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import {ElMessage, TabsPaneContext} from "element-plus";
-import {Vue} from "vue-class-component";
+import {Options, Vue} from "vue-class-component";
 import WaveformCanvas from "@/js/WaveformCanvas";
 import SpectrogramCanvas from "@/js/SpectrogramCanvas";
 import {Ticks} from "@/js/scales/Scales";
+import Spectrogram from "@/views/comp/Spectrogram.vue";
 
+@Options({components: {Spectrogram}})
 export default class Home extends Vue
 {
   // Canvas HTML elements
   declare $refs: {
     el: HTMLElement
     wfCanvas: HTMLCanvasElement
-    spCanvas: HTMLCanvasElement
   }
 
   // Canvas controllers
   waveformCanvas!: WaveformCanvas
-  spectrogramCanvas!: SpectrogramCanvas
 
   // Audio (null if no audio is provided)
   audio: AudioBuffer = null as never as AudioBuffer
-  ticks: Ticks = null as never as Ticks
 
   activeName = 'first'
 
@@ -64,14 +55,11 @@ export default class Home extends Vue
     console.log(tab, event)
   }
 
-  numberFormat = Intl.NumberFormat('en-US', {notation: "compact", maximumFractionDigits: 1})
-
   // Vue Lifecycle hook that runs after mount
   mounted()
   {
     // Initialize canvas
     this.waveformCanvas = new WaveformCanvas(this.$refs.wfCanvas)
-    this.spectrogramCanvas = new SpectrogramCanvas(this.$refs.spCanvas)
   }
 
   // Runs when the user drops an audio file over the drop area
@@ -111,8 +99,8 @@ export default class Home extends Vue
     console.log(data)
 
     this.waveformCanvas.drawAudio(this.audio)
-    this.ticks = await this.spectrogramCanvas.drawAudio(this.audio)
-    console.log(this.ticks)
+    // this.ticks = await this.spectrogramCanvas.drawAudio(this.audio)
+    // console.log(this.ticks)
   }
 }
 </script>
@@ -153,38 +141,4 @@ export default class Home extends Vue
     display: block
     //box-shadow: 0 2px 12px -2px rgb(0 0 0 / 10%)
     //box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)
-
-  .spectrogram > canvas
-    height: 100%
-
-  .x-ticks
-    width: 100%
-    background: #232323
-    color: lightgray
-    height: 30px
-    position: relative
-
-  .y-ticks
-    margin-top: 1px
-    background: #232323
-    color: lightgray
-    position: relative
-    width: 30px
-
-    font-size: 10px
-    text-align: left
-    overflow-y: hidden
-
-    .tick
-      position: absolute
-      white-space: nowrap
-      overflow: hidden
-      margin-top: -6px
-      align-items: center
-
-      .tick-line
-        width: 4px
-        height: 1px
-        background-color: lightgray
-        margin-right: 2px
 </style>
