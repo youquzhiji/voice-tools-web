@@ -9,10 +9,8 @@
     </div>
 
     <div class="results" :style="{visibility: audio ? 'unset' : 'hidden'}">
-      <div class="waveform">
-        <canvas ref="wfCanvas"></canvas>
-      </div>
-
+      <Waveform :audio="audio" v-if="audio" />
+      
       <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
         <el-tab-pane label="User" name="first">User</el-tab-pane>
         <el-tab-pane label="Config" name="second">Config</el-tab-pane>
@@ -28,22 +26,16 @@
 <script lang="ts">
 import {ElMessage, TabsPaneContext} from "element-plus";
 import {Options, Vue} from "vue-class-component";
-import WaveformCanvas from "@/js/WaveformCanvas";
-import SpectrogramCanvas from "@/js/SpectrogramCanvas";
-import {Ticks} from "@/js/scales/Scales";
 import Spectrogram from "@/views/comp/Spectrogram.vue";
+import Waveform from "@/views/comp/Waveform.vue";
 
-@Options({components: {Spectrogram}})
+@Options({components: {Waveform, Spectrogram}})
 export default class Home extends Vue
 {
   // Canvas HTML elements
   declare $refs: {
     el: HTMLElement
-    wfCanvas: HTMLCanvasElement
   }
-
-  // Canvas controllers
-  waveformCanvas!: WaveformCanvas
 
   // Audio (null if no audio is provided)
   audio: AudioBuffer = null as never as AudioBuffer
@@ -53,13 +45,6 @@ export default class Home extends Vue
   handleClick(tab: TabsPaneContext, event: Event)
   {
     console.log(tab, event)
-  }
-
-  // Vue Lifecycle hook that runs after mount
-  mounted()
-  {
-    // Initialize canvas
-    this.waveformCanvas = new WaveformCanvas(this.$refs.wfCanvas)
   }
 
   // Runs when the user drops an audio file over the drop area
@@ -97,10 +82,6 @@ export default class Home extends Vue
         `- Duration: ${this.audio.duration} sec\n` +
         `- Number of Channels: ${this.audio.numberOfChannels}\n`)
     console.log(data)
-
-    this.waveformCanvas.drawAudio(this.audio)
-    // this.ticks = await this.spectrogramCanvas.drawAudio(this.audio)
-    // console.log(this.ticks)
   }
 }
 </script>
@@ -134,11 +115,4 @@ export default class Home extends Vue
     flex-direction: column
     flex: 1
     min-height: 0
-
-  canvas
-    height: 50px
-    width: 100%
-    display: block
-    //box-shadow: 0 2px 12px -2px rgb(0 0 0 / 10%)
-    //box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)
 </style>
