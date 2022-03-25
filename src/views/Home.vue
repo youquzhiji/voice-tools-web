@@ -19,18 +19,22 @@
           Classification
         </div>
         <div class="tab-button" @click="() => activeTab = 3" :class="{sel: activeTab === 3}">
-          Pitch & Formant
+          Position
         </div>
       </div>
 
       <!-- Spectrogram View -->
       <div class="result-tab" v-if="activeTab === 1">
-<!--        <Spectrogram :audio="audio" v-if="audio" />-->
+        <Spectrogram :audio="audio" v-if="audio" />
       </div>
 
       <!-- Classification Results -->
       <div class="result-tab" v-if="activeTab === 2">
         <ClassificationResults :audio="audio" v-if="audio"/>
+      </div>
+
+      <!-- Pitch vs Formant -->
+      <div class="result-tab" v-if="activeTab === 3">
       </div>
     </div>
   </div>
@@ -131,38 +135,51 @@ export default class Home extends Vue
     flex: 1
     min-height: 0
 
-  $border-color: rgba(95, 55, 38, 0.78)
-
+  // Tab content
   .result-tab
-    border: 3px solid $border-color
     border-top: none
     margin-top: -1px
+
+    // Card effect
+    //box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)
+    box-shadow: 0 2px 12px -2px rgb(0 0 0 / 25%)
+    border-radius: 10px
+    margin-bottom: 20px
+    z-index: 2
+    background: white
 
   .result-nav
     display: flex
     flex-direction: row
-    margin-top: 10px
+    margin-top: 20px
     justify-content: center
-    min-height: 30px
+    min-height: 40px
+    color: rgba(95, 55, 38, 0.78)
 
     .tab-button
-      padding: 10px
+      padding: 5px 10px
       display: flex
       flex-direction: column
       justify-content: center
-      border-top: 3px solid transparent
-      border-bottom: 3px solid $border-color
+      border-radius: 10px 10px 0 0
+      background: lighten(#fff4eb, 1)
+      margin: 0 10px
+      min-width: 115px
 
     .tab-button.sel
-      border-left: 3px solid $border-color
-      border-right: 3px solid $border-color
-      border-top: 3px solid $border-color
-      border-bottom: 3px solid transparent
       border-radius: 10px 10px 0 0
-      background: #fff4eb
+      min-height: 30px
+      margin-top: -10px
+      background: white
+      color: #7c7c7c
+
+      // Show shadow without the bottom side
+      box-shadow: 0 2px 12px -2px rgb(0 0 0 / 10%)
+      clip-path: inset(-5px -5px 0 -5px)
+      z-index: 3
 
   .result-nav::before, .result-nav::after
     content: ''
     flex-grow: 1
-    border-bottom: 3px solid $border-color
+
 </style>
