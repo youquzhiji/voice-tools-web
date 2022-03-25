@@ -4,7 +4,7 @@
       Welcome to the voice training tool [TODO: 想一个名字]
     </div>
 
-    <div class="drop-box unselectable" @dragover="(e) => e.preventDefault()" @drop="onDrop" v-if="!audio">
+    <div class="drop-box unselectable shadow" @dragover="(e) => e.preventDefault()" @drop="onDrop" v-if="!audio">
       <span class="drop-label">Drop Here</span>
     </div>
 
@@ -105,11 +105,16 @@ export default class Home extends Vue
 </script>
 
 <style lang="sass" scoped>
+@import "src/css/colors"
+
 #home
   margin: 0 20px 0
 
   > * + *
     margin-top: 20px
+
+  .usage
+    color: $color-fg
 
   .drop-box
     width: 100%
@@ -117,16 +122,16 @@ export default class Home extends Vue
     margin-left: auto
     margin-right: auto
     height: 100px
-    border: 5px dashed pink
     border-radius: 25px
     box-sizing: border-box
+    background: white
 
     display: flex
     align-items: center
     justify-content: center
 
     .drop-label
-      color: gray
+      color: $color-bg
       font-size: 1.5em
 
   .results, .result-tab
@@ -139,6 +144,7 @@ export default class Home extends Vue
   .result-tab
     border-top: none
     margin-top: -1px
+    overflow: hidden
 
     // Card effect
     //box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)
@@ -154,7 +160,7 @@ export default class Home extends Vue
     margin-top: 20px
     justify-content: center
     min-height: 40px
-    color: rgba(95, 55, 38, 0.78)
+    color: $color-text-main
 
     .tab-button
       padding: 5px 10px
