@@ -27,6 +27,11 @@
       <div class="result-tab" v-if="activeTab === 1">
 <!--        <Spectrogram :audio="audio" v-if="audio" />-->
       </div>
+
+      <!-- Classification Results -->
+      <div class="result-tab" v-if="activeTab === 2">
+        <ClassificationResults :audio="audio" v-if="audio"/>
+      </div>
     </div>
   </div>
 </template>
@@ -36,8 +41,9 @@ import {ElMessage, TabsPaneContext} from "element-plus";
 import {Options, Vue} from "vue-class-component";
 import Spectrogram from "@/views/comp/Spectrogram.vue";
 import Waveform from "@/views/comp/Waveform.vue";
+import ClassificationResults from "@/views/comp/ClassificationResults.vue";
 
-@Options({components: {Waveform, Spectrogram}})
+@Options({components: {ClassificationResults, Waveform, Spectrogram}})
 export default class Home extends Vue
 {
   // Canvas HTML elements
@@ -47,7 +53,7 @@ export default class Home extends Vue
 
   // Audio (null if no audio is provided)
   audio: AudioBuffer = null as never as AudioBuffer
-  activeTab = 1
+  activeTab = 2
 
   // Runs when the user drops an audio file over the drop area
   async onDrop(e: DragEvent)
@@ -70,6 +76,12 @@ export default class Home extends Vue
         `- LastModified: ${file.lastModified}\n` +
         `- Size: ${file.size}\n` +
         `- Type: ${file.type}`)
+
+    // Upload file to be processed
+    // let formData = new FormData()
+    // formData.append('file', file)
+    // let res = await fetch('http://localhost:8000/process', {method: 'POST', body: formData})
+    // console.log(await res.text())
 
     // Read file
     // TODO: If file type is not supported, convert file on backend
