@@ -51,7 +51,6 @@ canvas
   position: relative
 
 .y-ticks
-  margin-top: 1px
   background: #232323
   color: lightgray
   position: relative

@@ -120,7 +120,7 @@ export default class SpectrogramCanvas extends CanvasController
                 const area = d.subarray(iCur, iNext == iCur ? iNext + 1 : iNext)
 
                 // Draw
-                const i = (this.h - y) * w4 + x4;
+                const i = (this.h - y - 1) * w4 + x4;
                 [imgA[i], imgA[i + 1], imgA[i + 2]] = gradient.get((mean(area) - min) / range)
                 imgA[i + 3] = 255
 
