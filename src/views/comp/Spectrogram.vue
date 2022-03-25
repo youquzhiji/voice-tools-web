@@ -42,6 +42,7 @@ export default class Spectrogram extends Vue {
 canvas
   height: 100%
   width: 100%
+  min-width: 0
 
 .x-ticks
   width: 100%
