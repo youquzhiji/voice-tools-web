@@ -1,5 +1,5 @@
 <template>
-  <div id="nav" class="fbox-h fcenter unselectable" @dragstart="e => e.preventDefault()">
+  <div id="nav" class="fbox-h fcenter unselectable anim" @dragstart="e => e.preventDefault()">
     <router-link class="rlink" to="/">
       <i class="fa-solid fa-house"></i>
       <span>Home</span>
@@ -32,6 +32,7 @@ import {Back} from "@element-plus/icons-vue";
   -moz-osx-font-smoothing: grayscale
   text-align: center
   color: #2c3e50
+  background: #6a6464
 
   display: flex
   flex-direction: column

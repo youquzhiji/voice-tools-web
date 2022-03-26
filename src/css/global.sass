@@ -39,6 +39,7 @@ $c-highlight: #ff7878
   display: flex
   flex-flow: column
   height: 100%
+  min-height: 0
 
 .mh0
   min-height: 0
@@ -61,6 +62,7 @@ $c-highlight: #ff7878
 
 .f-grow1
   flex-grow: 1
+  min-height: 0
 
 .f-no-shrink
   flex-shrink: 0
@@ -126,6 +128,9 @@ $c-highlight: #ff7878
   box-shadow: 0 10px 10px -5px $color-text-light
   cursor: pointer
 
-*
-  transition: all .25s ease
+.anim
+  *
+    transition: all .25s ease
 
+.shadow
+  box-shadow: 0 2px 12px -2px rgb(0 0 0 / 25%)

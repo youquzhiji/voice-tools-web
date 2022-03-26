@@ -2,6 +2,7 @@ import CanvasController from "@/js/CanvasController";
 import * as tf from '@tensorflow/tfjs'
 import chroma from "chroma-js";
 import {extremes, Gradient, mean} from "@/js/Utils";
+import {hzToMel, melToHz, ticksLinear, ticksLog2, ticksMel, ticksMel2} from "@/js/scales/Scales";
 
 /**
  * Convert power spectrum signal to decibel signal inspired by python's librosa library.
@@ -74,22 +75,39 @@ export default class SpectrogramCanvas extends CanvasController
         const range = max - min
 
         // Mapping i(y) - Input: pixel index y, Output: displayed index in array
+        // y: y axis value
+        // Output: transformed coefficient
         // Displayed index range = i(y) to i(y + 1), non-inclusive
         const binLen = spec[0].length
         const logLen = Math.log2(binLen)
+        // const melLen = hzToMel()
         const [yPxLen, logPxLen] = [binLen / this.h, logLen / this.h]
+        const logMin = Math.log2(32)
         const mappingLinear = (y: number) => y * yPxLen
-        const mappingLog = (y: number) => Math.floor(Math.pow(2, y * logPxLen))
+        // const mappingLog = (y: number) => Math.floor((Math.pow(2, (y / this.h) * logLen) - 32) / (binLen - 32) + 32)
+        const mappingLog = (y: number) => Math.pow(2, y)
+        const mappingMel =(y:number) => Math.floor(2595 * Math.log10(y / 700 + 1))
+
+        function createArray(max: number, resolution: number)
+        {
+            return Array.from(Array(Math.floor(resolution)).keys()).map(i => i / resolution * max)
+        }
 
         // Precompute mapping
-        const mapping = Array.from(Array(this.h).keys()).map(i => mappingLog(i))
+        // const mappedLog = createArray(logLen, 1000).map(i => mappingLog(i))
+        const mappedMel = createArray(hzToMel(1024), 1000).map(i => melToHz(i))
+        console.log(createArray(hzToMel(1024), 1000))
+        console.log(mappedMel)
+        const mapping = Array.from(Array(this.h).keys()).map(y => Math.floor(mappedMel[Math.floor(y / this.h * mappedMel.length)]))
+        console.log(mapping)
 
         // Draw each pixel
         const img = this.ctx.createImageData(this.w, this.h)
         const imgA = img.data
         const w4 = this.w * 4
-        const gradient = new Gradient(chroma.scale(['#000',
+        const gradient = new Gradient(chroma.scale(['#232323',
             '#4F1879', '#B43A78', '#F98766', '#FCFAC0']), 1000);
+        // const gradient = new Gradient(chroma.scale(['#fff', '#ff7676', '#ff7676', '#ff2f2f']), 1000);
         for (let x = 0; x < this.w; x++)
         {
             const d = spec[x]
@@ -102,7 +120,7 @@ export default class SpectrogramCanvas extends CanvasController
                 const area = d.subarray(iCur, iNext == iCur ? iNext + 1 : iNext)
 
                 // Draw
-                const i = (this.h - y) * w4 + x4;
+                const i = (this.h - y - 1) * w4 + x4;
                 [imgA[i], imgA[i + 1], imgA[i + 2]] = gradient.get((mean(area) - min) / range)
                 imgA[i + 3] = 255
 
@@ -115,6 +133,7 @@ export default class SpectrogramCanvas extends CanvasController
         this.ctx.putImageData(img, 0, 0)
 
         console.log(`drawing done: ${performance.now() - start} ms`)
-    }
 
+        return ticksMel2(this.h, 0, audio.sampleRate / 2)
+    }
 }

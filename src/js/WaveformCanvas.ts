@@ -1,7 +1,7 @@
 import CanvasController from "@/js/CanvasController";
 import {extremes} from "@/js/Utils";
 
-const waveColor = 'pink'
+const waveColor = '#fff4eb'
 
 export default class WaveformCanvas extends CanvasController
 {

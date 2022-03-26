@@ -1,50 +1,63 @@
 <template>
   <div id="home" ref="el" class="fbox-v">
-    <div class="usage">
+    <div class="usage" v-if="!audio">
       Welcome to the voice training tool [TODO: 想一个名字]
     </div>
 
-    <div class="drop-box unselectable" @dragover="(e) => e.preventDefault()" @drop="onDrop" v-if="!audio">
+    <div class="drop-box unselectable shadow" @dragover="(e) => e.preventDefault()" @drop="onDrop" v-if="!audio">
       <span class="drop-label">Drop Here</span>
     </div>
 
-    <div class="waveform" :style="{visibility: audio ? 'unset' : 'hidden'}">
-      <canvas ref="wfCanvas"></canvas>
-    </div>
+    <div class="results" :style="{visibility: audio ? 'unset' : 'hidden'}">
+      <Waveform :audio="audio" v-if="audio" />
 
-    <canvas ref="spCanvas" class="f-grow1" :style="{visibility: audio ? 'unset' : 'hidden'}"></canvas>
+      <div class="result-nav unselectable anim">
+        <div class="tab-button spectrogram" @click="() => activeTab = 1" :class="{sel: activeTab === 1}">
+          Spectrogram
+        </div>
+        <div class="tab-button" @click="() => activeTab = 2" :class="{sel: activeTab === 2}">
+          Classification
+        </div>
+        <div class="tab-button" @click="() => activeTab = 3" :class="{sel: activeTab === 3}">
+          Position
+        </div>
+      </div>
+
+      <!-- Spectrogram View -->
+      <div class="result-tab" :style="activeTab === 1 ? {} : {display: 'none'}">
+        <Spectrogram :audio="audio" v-if="audio" />
+      </div>
+
+      <!-- Classification Results -->
+      <div class="result-tab" v-if="activeTab === 2">
+        <ClassificationResults :audio="audio" v-if="audio"/>
+      </div>
+
+      <!-- Pitch vs Formant -->
+      <div class="result-tab" v-if="activeTab === 3">
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import {ElMessage} from "element-plus";
-import {Vue} from "vue-class-component";
-import WaveformCanvas from "@/js/WaveformCanvas";
-import SpectrogramCanvas from "@/js/SpectrogramCanvas";
+import {ElMessage, TabsPaneContext} from "element-plus";
+import {Options, Vue} from "vue-class-component";
+import Spectrogram from "@/views/comp/Spectrogram.vue";
+import Waveform from "@/views/comp/Waveform.vue";
+import ClassificationResults from "@/views/comp/ClassificationResults.vue";
 
+@Options({components: {ClassificationResults, Waveform, Spectrogram}})
 export default class Home extends Vue
 {
   // Canvas HTML elements
   declare $refs: {
     el: HTMLElement
-    wfCanvas: HTMLCanvasElement
-    spCanvas: HTMLCanvasElement
   }
-
-  // Canvas controllers
-  waveformCanvas!: WaveformCanvas
-  spectrogramCanvas!: SpectrogramCanvas
 
   // Audio (null if no audio is provided)
   audio: AudioBuffer = null as never as AudioBuffer
-
-  // Vue Lifecycle hook that runs after mount
-  mounted()
-  {
-    // Initialize canvas
-    this.waveformCanvas = new WaveformCanvas(this.$refs.wfCanvas)
-    this.spectrogramCanvas = new SpectrogramCanvas(this.$refs.spCanvas)
-  }
+  activeTab = 2
 
   // Runs when the user drops an audio file over the drop area
   async onDrop(e: DragEvent)
@@ -68,6 +81,12 @@ export default class Home extends Vue
         `- Size: ${file.size}\n` +
         `- Type: ${file.type}`)
 
+    // Upload file to be processed
+    // let formData = new FormData()
+    // formData.append('file', file)
+    // let res = await fetch('http://localhost:8000/process', {method: 'POST', body: formData})
+    // console.log(await res.text())
+
     // Read file
     // TODO: If file type is not supported, convert file on backend
     const buf = await file.arrayBuffer()
@@ -81,46 +100,96 @@ export default class Home extends Vue
         `- Duration: ${this.audio.duration} sec\n` +
         `- Number of Channels: ${this.audio.numberOfChannels}\n`)
     console.log(data)
-
-    this.waveformCanvas.drawAudio(this.audio)
-    await this.spectrogramCanvas.drawAudio(this.audio)
   }
 }
 </script>
 
 <style lang="sass" scoped>
-#home
-  width: 100%
-  max-width: 600px
-  margin: auto
+@import "src/css/colors"
 
-  * + *
+#home
+  margin: 0 20px 0
+
+  > * + *
     margin-top: 20px
+
+  .usage
+    color: $color-fg
 
   .drop-box
     width: 100%
+    max-width: 600px
+    margin-left: auto
+    margin-right: auto
     height: 100px
-    border: 5px dashed pink
     border-radius: 25px
     box-sizing: border-box
+    background: white
 
     display: flex
     align-items: center
     justify-content: center
 
     .drop-label
-      color: gray
+      color: $color-bg
       font-size: 1.5em
 
-  canvas
-    height: 50px
-    width: 100%
-    display: block
+  .results, .result-tab
+    display: flex
+    flex-direction: column
+    flex: 1
+    min-height: 0
 
-    border-radius: 10px
-    //box-shadow: 0 2px 12px -2px rgb(0 0 0 / 10%)
+  // Tab content
+  .result-tab
+    border-top: none
+    margin-top: -1px
+    overflow-x: hidden
+
+    // Card effect
     //box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)
+    box-shadow: 0 2px 12px -2px rgb(0 0 0 / 25%)
+    border-radius: 10px
+    margin-bottom: 20px
+    z-index: 2
+    background: white
 
-  .spectrogram > canvas
-    height: 100%
+  .result-nav
+    display: flex
+    flex-direction: row
+    margin-top: 20px
+    justify-content: center
+    min-height: 40px
+    color: $color-text-main
+
+    .tab-button
+      padding: 5px 10px
+      display: flex
+      flex-direction: column
+      justify-content: center
+      border-radius: 10px 10px 0 0
+      background: lighten(#fff4eb, 1)
+      margin: 0 10px
+      min-width: 115px
+
+    .tab-button.sel
+      border-radius: 10px 10px 0 0
+      min-height: 30px
+      margin-top: -10px
+      background: white
+      color: #7c7c7c
+
+      // Show shadow without the bottom side
+      box-shadow: 0 2px 12px -2px rgb(0 0 0 / 10%)
+      clip-path: inset(-5px -5px 0 -5px)
+      z-index: 3
+
+    .tab-button.spectrogram
+      background: #232323
+      color: #c9c9c9
+
+  .result-nav::before, .result-nav::after
+    content: ''
+    flex-grow: 1
+
 </style>
