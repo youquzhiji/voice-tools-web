@@ -80,6 +80,8 @@ export default class ClassificationResults extends Vue
           borderColor: '#81daff',
           pointRadius: 0,
           showLine: true,
+          fill: 'origin',
+          backgroundColor: 'rgba(129,218,255,0.5)',
         },
         {
           label: 'Feminine Range',
@@ -87,6 +89,8 @@ export default class ClassificationResults extends Vue
           borderColor: '#ffbec8',
           pointRadius: 0,
           showLine: true,
+          fill: 'origin',
+          backgroundColor: 'rgba(255,190,200,0.5)',
         }
       ]
     }
