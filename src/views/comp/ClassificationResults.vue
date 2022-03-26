@@ -3,7 +3,7 @@
     <div class="title">Full Audio Statistics</div>
 
     <div class="features-bar">
-      <div class="feature" :class="f" v-for="f in Object.keys(result.fem_prob)" ref="feature">
+      <div class="feature" :class="f" v-for="f in ['pitch', 'f1', 'f2', 'f3', 'tilt']" ref="feature">
         <div class="description">
           <span class="name">{{featureDescriptions[f].split(' - ')[0]}}</span>
           <span class="desc"> {{featureDescriptions[f].split(' - ')[1]}}</span>
@@ -38,7 +38,8 @@ const featureDescriptions = {
   tilt: 'Spectral Tilt - Whether the voice sounds breathy or creaky.'
 }
 
-export type FeatureLiteral = 'pitch' | 'f1' | 'f2' | 'f3' | 'tilt'
+// export type FeatureLiteral = 'pitch' | 'f1' | 'f2' | 'f3' | 'tilt'
+export type FeatureLiteral = string
 
 export interface Features
 {
