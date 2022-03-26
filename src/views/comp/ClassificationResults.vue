@@ -80,6 +80,13 @@ export default class ClassificationResults extends Vue
   getOptions(feature: FeatureLiteral)
   {
     const chartOptions: ChartOptions = {
+      scales: {
+        y: {
+          ticks: {
+            display: false
+          }
+        },
+      },
       plugins: {
         annotation: {
           drawTime: 'afterDatasetsDraw',
