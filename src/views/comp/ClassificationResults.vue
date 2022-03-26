@@ -3,19 +3,21 @@
     <div class="title">Full Audio Statistics</div>
 
     <div class="features-bar">
-      <div class="feature" v-for="f in Object.keys(result.fem_prob)">
+      <div class="feature" :class="f" v-for="f in Object.keys(result.fem_prob)" ref="feature">
         <div class="description">
           <span class="name">{{featureDescriptions[f].split(' - ')[0]}}</span>
           <span class="desc"> {{featureDescriptions[f].split(' - ')[1]}}</span>
         </div>
-        <div class="classification-bar">
+        <div class="classification-bar unselectable clickable" @click="updateAccordion(f)">
           <span class="f fbox-vcenter" :style="{width: `${(result.fem_prob[f] * 100).toFixed(0)}%`}">
             <span class="percentage-sub" :class="{right: result.fem_prob[f] < 0.5}">
               {{(result.fem_prob[f] * 100).toFixed(0)}}%
             </span>
           </span>
         </div>
-        <ScatterChart :chartData="getCurveData(f)" :options="getOptions(f)"/>
+        <div class="chart-wrapper">
+          <ScatterChart :height="200" :chartData="getCurveData(f)" :options="getOptions(f)" style="min-height: 200px"/>
+        </div>
       </div>
     </div>
   </div>
@@ -61,6 +63,19 @@ export default class ClassificationResults extends Vue
   featureDescriptions = featureDescriptions
 
   @Prop() audio!: AudioBuffer
+
+  expanded = false
+
+  mounted()
+  {
+    $(`.feature`).accordion({collapsible: true, header: '.classification-bar', heightStyle: 'content',
+      active: this.expanded ? 0 : false, animate: {easing: 'swing', duration: 500}})
+  }
+
+  updateAccordion(feature: FeatureLiteral)
+  {
+    $(`.feature:not(.${feature})`).accordion({active: false})
+  }
 
   getOptions(feature: FeatureLiteral)
   {
