@@ -15,6 +15,7 @@
             </span>
           </span>
         </div>
+        <ScatterChart :chartData="getCurveData(f)" :options="getOptions(f)"/>
       </div>
     </div>
   </div>
@@ -23,6 +24,9 @@
 <script lang="ts">
 import {Options, Vue} from 'vue-class-component';
 import {Prop} from "vue-property-decorator";
+import curves from '@/data/vox1_kde_curves.json';
+import {DoughnutChart, LineChart, ScatterChart, useDoughnutChart} from "vue-chart-3";
+import { Chart, ChartData, ChartOptions, registerables, Plugin } from "chart.js";
 
 const featureDescriptions = {
   pitch: 'Pitch / F0 - Whether the voice sounds high or low.',
@@ -31,6 +35,8 @@ const featureDescriptions = {
   f3: 'Formant F3 - Unknown?',
   tilt: 'Spectral Tilt - Whether the voice sounds breathy or creaky.'
 }
+
+export type FeatureLiteral = 'pitch' | 'f1' | 'f2' | 'f3' | 'tilt'
 
 export interface Features
 {
@@ -47,7 +53,7 @@ export interface ReturnedResult
   fem_prob: Features
 }
 
-@Options({components: {}})
+@Options({components: {ScatterChart, DoughnutChart}})
 export default class ClassificationResults extends Vue
 {
   // TODO: Make this a prop
@@ -55,6 +61,37 @@ export default class ClassificationResults extends Vue
   featureDescriptions = featureDescriptions
 
   @Prop() audio!: AudioBuffer
+
+  getOptions(feature: FeatureLiteral)
+  {
+    const chartOptions: ChartOptions = {
+    }
+    return chartOptions
+  }
+
+  getCurveData(feature: FeatureLiteral)
+  {
+    const d = curves[feature]
+    const data: ChartData = {
+      datasets: [
+        {
+          label: 'Masculine Range',
+          data: d.m[0].map((val, i) => { return {x: val, y: d.m[1][i]}}),
+          borderColor: '#81daff',
+          pointRadius: 0,
+          showLine: true,
+        },
+        {
+          label: 'Feminine Range',
+          data: d.f[0].map((val, i) => { return {x: val, y: d.f[1][i]}}),
+          borderColor: '#ffbec8',
+          pointRadius: 0,
+          showLine: true,
+        }
+      ]
+    }
+    return data
+  }
 }
 </script>
 
