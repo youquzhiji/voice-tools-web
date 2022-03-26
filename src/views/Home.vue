@@ -12,7 +12,7 @@
       <Waveform :audio="audio" v-if="audio" />
 
       <div class="result-nav unselectable">
-        <div class="tab-button" @click="() => activeTab = 1" :class="{sel: activeTab === 1}">
+        <div class="tab-button spectrogram" @click="() => activeTab = 1" :class="{sel: activeTab === 1}">
           Spectrogram
         </div>
         <div class="tab-button" @click="() => activeTab = 2" :class="{sel: activeTab === 2}">
@@ -24,7 +24,7 @@
       </div>
 
       <!-- Spectrogram View -->
-      <div class="result-tab" v-if="activeTab === 1">
+      <div class="result-tab" :style="activeTab === 1 ? {} : {display: 'none'}">
         <Spectrogram :audio="audio" v-if="audio" />
       </div>
 
@@ -144,7 +144,7 @@ export default class Home extends Vue
   .result-tab
     border-top: none
     margin-top: -1px
-    overflow: hidden
+    overflow-x: hidden
 
     // Card effect
     //box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)
@@ -183,6 +183,10 @@ export default class Home extends Vue
       box-shadow: 0 2px 12px -2px rgb(0 0 0 / 10%)
       clip-path: inset(-5px -5px 0 -5px)
       z-index: 3
+
+    .tab-button.spectrogram
+      background: #232323
+      color: #c9c9c9
 
   .result-nav::before, .result-nav::after
     content: ''
