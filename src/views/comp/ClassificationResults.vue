@@ -28,7 +28,7 @@ import {Options, Vue} from 'vue-class-component';
 import {Prop} from "vue-property-decorator";
 import curves from '@/data/vox1_kde_curves.json';
 import {DoughnutChart, LineChart, ScatterChart, useDoughnutChart} from "vue-chart-3";
-import { Chart, ChartData, ChartOptions, registerables, Plugin } from "chart.js";
+import {Chart, ChartData, ChartOptions, registerables, Plugin} from "chart.js";
 
 const featureDescriptions = {
   pitch: 'Pitch / F0 - Whether the voice sounds high or low.',
@@ -64,12 +64,10 @@ export default class ClassificationResults extends Vue
 
   @Prop() audio!: AudioBuffer
 
-  expanded = false
-
   mounted()
   {
     $(`.feature`).accordion({collapsible: true, header: '.classification-bar', heightStyle: 'content',
-      active: this.expanded ? 0 : false, animate: {easing: 'swing', duration: 500}})
+      active: false, animate: {easing: 'swing', duration: 500}})
   }
 
   updateAccordion(feature: FeatureLiteral)
