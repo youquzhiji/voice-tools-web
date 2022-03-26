@@ -65,7 +65,29 @@ export default class ClassificationResults extends Vue
   getOptions(feature: FeatureLiteral)
   {
     const chartOptions: ChartOptions = {
+      plugins: {
+        annotation: {
+          drawTime: 'afterDatasetsDraw',
+          annotations: {
+            you: {
+              type: 'line',
+              xMin: this.result.means[feature],
+              xMax: this.result.means[feature],
+              borderColor: 'rgba(106,100,100,0.47)',
+              borderWidth: 2,
+              label: {
+                enabled: true,
+                position: 'start',
+                content: "You're Here",
+                color: '#ffe3be',
+                backgroundColor: 'rgba(106,100,100,0.8)'
+              }
+            }
+          }
+        }
+      }
     }
+    console.log(chartOptions)
     return chartOptions
   }
 
