@@ -1,5 +1,5 @@
 <template>
-  <div id="nav" class="fbox-h fcenter unselectable" @dragstart="e => e.preventDefault()">
+  <div id="nav" class="fbox-h fcenter unselectable anim" @dragstart="e => e.preventDefault()">
     <router-link class="rlink" to="/">
       <i class="fa-solid fa-house"></i>
       <span>Home</span>

@@ -11,7 +11,7 @@
     <div class="results" :style="{visibility: audio ? 'unset' : 'hidden'}">
       <Waveform :audio="audio" v-if="audio" />
 
-      <div class="result-nav unselectable">
+      <div class="result-nav unselectable anim">
         <div class="tab-button spectrogram" @click="() => activeTab = 1" :class="{sel: activeTab === 1}">
           Spectrogram
         </div>
