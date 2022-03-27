@@ -73,17 +73,6 @@ export default class SpectrogramCanvas extends CanvasController
         const [min, max] = extremes(spec.flatMap(it => extremes(it)))
         const range = max - min
 
-        // Mapping i(y) - Input: pixel index y, Output: displayed index in array
-        // y: y axis value
-        // Output: transformed coefficient
-        // Displayed index range = i(y) to i(y + 1), non-inclusive
-        const binLen = spec[0].length
-        const yPxLen = binLen / this.h
-        const logMin = Math.log2(32)
-        const mappingLinear = (y: number) => y * yPxLen
-        const mappingLog = (y: number) => Math.pow(2, y)
-        const mappingMel = (y: number) => Math.floor(2595 * Math.log10(y / 700 + 1))
-
         function createArray(max: number, resolution: number)
         {
             return Array.from(Array(Math.floor(resolution)).keys()).map(i => i / resolution * max)
