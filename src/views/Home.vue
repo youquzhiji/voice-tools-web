@@ -41,13 +41,12 @@
 </template>
 
 <script lang="ts">
-import {ElMessage, TabsPaneContext} from "element-plus";
+import {ElMessage} from "element-plus";
 import {Options, Vue} from "vue-class-component";
 import Spectrogram from "@/views/comp/Spectrogram.vue";
 import Waveform from "@/views/comp/Waveform.vue";
 import ClassificationResults, {MLFrame, StatsResult} from "@/views/comp/ClassificationResults.vue";
 import {decodeFreqArray} from "@/js/Utils";
-import {Prop} from "vue-property-decorator";
 
 @Options({components: {ClassificationResults, Waveform, Spectrogram}})
 export default class Home extends Vue
@@ -62,7 +61,7 @@ export default class Home extends Vue
   stats: StatsResult
   ml: MLFrame[]
 
-  activeTab = 2
+  activeTab = 1
 
   // Runs when the user drops an audio file over the drop area
   async onDrop(e: DragEvent)

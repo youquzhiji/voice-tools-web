@@ -69,7 +69,6 @@ export default class SpectrogramCanvas extends CanvasController
         start = performance.now()
 
         this.el.width = this.w = spec.length
-        // const xPxLen = d.length / this.w
 
         const [min, max] = extremes(spec.flatMap(it => extremes(it)))
         const range = max - min
@@ -79,14 +78,11 @@ export default class SpectrogramCanvas extends CanvasController
         // Output: transformed coefficient
         // Displayed index range = i(y) to i(y + 1), non-inclusive
         const binLen = spec[0].length
-        const logLen = Math.log2(binLen)
-        // const melLen = hzToMel()
-        const [yPxLen, logPxLen] = [binLen / this.h, logLen / this.h]
+        const yPxLen = binLen / this.h
         const logMin = Math.log2(32)
         const mappingLinear = (y: number) => y * yPxLen
-        // const mappingLog = (y: number) => Math.floor((Math.pow(2, (y / this.h) * logLen) - 32) / (binLen - 32) + 32)
         const mappingLog = (y: number) => Math.pow(2, y)
-        const mappingMel = (y:number) => Math.floor(2595 * Math.log10(y / 700 + 1))
+        const mappingMel = (y: number) => Math.floor(2595 * Math.log10(y / 700 + 1))
 
         function createArray(max: number, resolution: number)
         {
@@ -94,12 +90,8 @@ export default class SpectrogramCanvas extends CanvasController
         }
 
         // Precompute mapping
-        // const mappedLog = createArray(logLen, 1000).map(i => mappingLog(i))
         const mappedMel = createArray(hzToMel(1024), 1000).map(i => melToHz(i))
-        // console.log(createArray(hzToMel(1024), 1000))
-        // console.log(mappedMel)
         const mapping = Array.from(Array(this.h).keys()).map(y => Math.floor(mappedMel[Math.floor(y / this.h * mappedMel.length)]))
-        // console.log(mapping)
 
         // Draw each pixel
         const img = this.ctx.createImageData(this.w, this.h)
@@ -107,7 +99,6 @@ export default class SpectrogramCanvas extends CanvasController
         const w4 = this.w * 4
         const gradient = new Gradient(chroma.scale(['#232323',
             '#4F1879', '#B43A78', '#F98766', '#FCFAC0']), 1000);
-        // const gradient = new Gradient(chroma.scale(['#fff', '#ff7676', '#ff7676', '#ff2f2f']), 1000);
         for (let x = 0; x < this.w; x++)
         {
             const d = spec[x]
@@ -123,11 +114,6 @@ export default class SpectrogramCanvas extends CanvasController
                 const i = (this.h - y - 1) * w4 + x4;
                 [imgA[i], imgA[i + 1], imgA[i + 2]] = gradient.get((mean(area) - min) / range)
                 imgA[i + 3] = 255
-
-                // this.ctx.beginPath()
-                // this.ctx.fillStyle = gradient((mean(area) - min) / range).toString()
-                // this.ctx.fillRect(x, this.h - y, 1, 1)
-                // this.ctx.closePath()
             }
         }
         this.ctx.putImageData(img, 0, 0)
