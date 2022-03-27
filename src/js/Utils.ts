@@ -1,4 +1,6 @@
 import chroma from "chroma-js";
+import buffer from "buffer";
+import {FeatureLiteral} from "@/views/comp/ClassificationResults.vue";
 
 type NumberArray = Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array |
     Float32Array | Float64Array | number[] | Array<number>
@@ -77,4 +79,25 @@ export class Gradient
         const i = Math.round(ratio * this.res)
         return [this.r[i], this.g[i], this.b[i]]
     }
+}
+
+
+/**
+ * Decode frequency ndarray
+ *
+ * @param b64 Base 64 encoded
+ * @param shape Shape
+ */
+export function decodeFreqArray(b64: string, shape: number[]): {[index: string]: Float32Array}
+{
+    const array = new Float32Array(buffer.Buffer.from(b64, 'base64').buffer)
+    const rows = 4
+    const cols = array.length / rows
+    const keys = ['pitch', 'f1', 'f2', 'f3']
+    const result = {}
+
+    for (let x = 0; x < rows; x++)
+        result[keys[x]] = array.slice(cols * x, cols * (x + 1))
+
+    return result
 }

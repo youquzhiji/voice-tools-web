@@ -46,6 +46,7 @@ import {Options, Vue} from "vue-class-component";
 import Spectrogram from "@/views/comp/Spectrogram.vue";
 import Waveform from "@/views/comp/Waveform.vue";
 import ClassificationResults from "@/views/comp/ClassificationResults.vue";
+import {decodeFreqArray} from "@/js/Utils";
 
 @Options({components: {ClassificationResults, Waveform, Spectrogram}})
 export default class Home extends Vue
@@ -82,10 +83,14 @@ export default class Home extends Vue
         `- Type: ${file.type}`)
 
     // Upload file to be processed
-    // let formData = new FormData()
-    // formData.append('file', file)
-    // let res = await fetch('http://localhost:8000/process', {method: 'POST', body: formData})
-    // console.log(await res.text())
+    let formData = new FormData()
+    formData.append('file', file)
+    let res = await fetch('http://localhost:8000/process', {method: 'POST', body: formData})
+    let json = await res.json()
+    console.log(json)
+
+    const freqArray = decodeFreqArray(json.freq_array.bytes, json.freq_array.shape)
+    console.log(freqArray)
 
     // Read file
     // TODO: If file type is not supported, convert file on backend
@@ -99,7 +104,7 @@ export default class Home extends Vue
         `- Array Length: ${this.audio.length}\n` +
         `- Duration: ${this.audio.duration} sec\n` +
         `- Number of Channels: ${this.audio.numberOfChannels}\n`)
-    console.log(data)
+    // console.log(data)
   }
 }
 </script>

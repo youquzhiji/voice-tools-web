@@ -86,7 +86,7 @@ export default class SpectrogramCanvas extends CanvasController
         const mappingLinear = (y: number) => y * yPxLen
         // const mappingLog = (y: number) => Math.floor((Math.pow(2, (y / this.h) * logLen) - 32) / (binLen - 32) + 32)
         const mappingLog = (y: number) => Math.pow(2, y)
-        const mappingMel =(y:number) => Math.floor(2595 * Math.log10(y / 700 + 1))
+        const mappingMel = (y:number) => Math.floor(2595 * Math.log10(y / 700 + 1))
 
         function createArray(max: number, resolution: number)
         {
@@ -96,10 +96,10 @@ export default class SpectrogramCanvas extends CanvasController
         // Precompute mapping
         // const mappedLog = createArray(logLen, 1000).map(i => mappingLog(i))
         const mappedMel = createArray(hzToMel(1024), 1000).map(i => melToHz(i))
-        console.log(createArray(hzToMel(1024), 1000))
-        console.log(mappedMel)
+        // console.log(createArray(hzToMel(1024), 1000))
+        // console.log(mappedMel)
         const mapping = Array.from(Array(this.h).keys()).map(y => Math.floor(mappedMel[Math.floor(y / this.h * mappedMel.length)]))
-        console.log(mapping)
+        // console.log(mapping)
 
         // Draw each pixel
         const img = this.ctx.createImageData(this.w, this.h)

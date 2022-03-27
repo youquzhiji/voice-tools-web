@@ -108,7 +108,6 @@ export default class ClassificationResults extends Vue
         }
       }
     }
-    console.log(chartOptions)
     return chartOptions
   }
 
