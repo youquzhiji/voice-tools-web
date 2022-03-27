@@ -30,7 +30,7 @@
 
       <!-- Classification Results -->
       <div class="result-tab" v-if="activeTab === 2">
-        <ClassificationResults :audio="audio" v-if="audio"/>
+        <ClassificationResults v-if="audio" :audio="audio" :stats="stats" :ml="ml"/>
       </div>
 
       <!-- Pitch vs Formant -->
@@ -45,8 +45,9 @@ import {ElMessage, TabsPaneContext} from "element-plus";
 import {Options, Vue} from "vue-class-component";
 import Spectrogram from "@/views/comp/Spectrogram.vue";
 import Waveform from "@/views/comp/Waveform.vue";
-import ClassificationResults from "@/views/comp/ClassificationResults.vue";
+import ClassificationResults, {MLFrame, StatsResult} from "@/views/comp/ClassificationResults.vue";
 import {decodeFreqArray} from "@/js/Utils";
+import {Prop} from "vue-property-decorator";
 
 @Options({components: {ClassificationResults, Waveform, Spectrogram}})
 export default class Home extends Vue
@@ -58,6 +59,9 @@ export default class Home extends Vue
 
   // Audio (null if no audio is provided)
   audio: AudioBuffer = null as never as AudioBuffer
+  stats: StatsResult
+  ml: MLFrame[]
+
   activeTab = 2
 
   // Runs when the user drops an audio file over the drop area
@@ -87,6 +91,8 @@ export default class Home extends Vue
     formData.append('file', file)
     let res = await fetch('http://localhost:8000/process', {method: 'POST', body: formData})
     let json = await res.json()
+    this.stats = json.result
+    this.ml = json.ml
     console.log(json)
 
     const freqArray = decodeFreqArray(json.freq_array.bytes, json.freq_array.shape)
