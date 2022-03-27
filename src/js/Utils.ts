@@ -8,13 +8,28 @@ type NumberArray = Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Arra
 export function sum(arr: NumberArray): number
 {
     let sum = 0
-    for (let i = 0; i < arr.length; i++) sum += arr[i]
+    for (let i = 0; i < arr.length; i++)
+    {
+        if (!isNaN(arr[i])) sum += arr[i]
+    }
     return sum
 }
 
-export function mean(arr: NumberArray): number
+export function mean(arr: NumberArray): number | null
 {
-    return sum(arr) / arr.length
+    let sum = 0
+    let len = 0
+    for (let i = 0; i < arr.length; i++)
+    {
+        if (!isNaN(arr[i]))
+        {
+            sum += arr[i]
+            len ++
+        }
+    }
+    if (len == 0)
+        return null
+    return sum / len
 }
 
 /**
