@@ -2,7 +2,7 @@ import chroma from "chroma-js";
 import buffer from "buffer";
 import {FeatureLiteral} from "@/views/comp/ClassificationResults.vue";
 
-type NumberArray = Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array |
+export type NumberArray = Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array |
     Float32Array | Float64Array | number[] | Array<number>
 
 export function sum(arr: NumberArray): number
