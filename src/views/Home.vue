@@ -25,7 +25,7 @@
 
       <!-- Spectrogram View -->
       <div class="result-tab" :style="activeTab === 1 ? {} : {display: 'none'}">
-        <Spectrogram :audio="audio" v-if="audio" />
+        <Spectrogram v-if="audio" :audio="audio" :freq-arrays="freqArrays"/>
       </div>
 
       <!-- Classification Results -->
@@ -60,6 +60,7 @@ export default class Home extends Vue
   audio: AudioBuffer = null as never as AudioBuffer
   stats: StatsResult
   ml: MLFrame[]
+  freqArrays: {[index: string]: Float32Array}
 
   activeTab = 1
 
@@ -92,10 +93,8 @@ export default class Home extends Vue
     let json = await res.json()
     this.stats = json.result
     this.ml = json.ml
+    this.freqArrays = decodeFreqArray(json.freq_array.bytes, json.freq_array.shape)
     console.log(json)
-
-    const freqArray = decodeFreqArray(json.freq_array.bytes, json.freq_array.shape)
-    console.log(freqArray)
 
     // Read file
     // TODO: If file type is not supported, convert file on backend

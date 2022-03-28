@@ -180,4 +180,36 @@ export default class SpectrogramCanvas extends CanvasController
 
         return ticksMel2(this.h, 0, audio.sampleRate / 2)
     }
+
+    /**
+     * Draw a line
+     *
+     * @param lineData
+     * @param timeScale
+     * @param color
+     */
+    async drawLine(lineData: Float32Array, timeScale: number, color: string)
+    {
+        console.log('Drawing line...')
+        const xLen = lineData.length / this.w
+        let lastMean: number | null = null
+        const maxMel = hzToMel(8000)
+        // console.log(maxMel)
+
+        for (let x = 0; x < this.w; x++)
+        {
+            const windowMean = mean(lineData.subarray(xLen * x, xLen * (x + 1)))
+            // if (windowMean != null) console.log(windowMean.toFixed(0), hzToMel(windowMean) / maxMel * this.h)
+
+            if (lastMean != null && windowMean != null)
+            {
+                this.ctx.moveTo(x - 1, this.h - hzToMel(lastMean) / maxMel * this.h)
+                this.ctx.lineTo(x, this.h - hzToMel(windowMean) / maxMel * this.h)
+                this.ctx.stroke()
+                this.ctx.strokeStyle = color
+            }
+
+            lastMean = windowMean
+        }
+    }
 }

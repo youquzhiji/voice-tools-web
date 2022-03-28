@@ -23,16 +23,18 @@ export default class Spectrogram extends Vue {
   }
 
   @Prop() audio!: AudioBuffer
+  @Prop() freqArrays!: {[index: string]: Float32Array}
   spectrogramCanvas!: SpectrogramCanvas
 
   numberFormat = Intl.NumberFormat('en-US', {notation: "compact", maximumFractionDigits: 1})
   ticks: Ticks = null as never as Ticks
 
-  mounted()
+  async mounted()
   {
     console.log('Spectrogram mounting...')
     this.spectrogramCanvas = new SpectrogramCanvas(this.$refs.spCanvas)
-    this.spectrogramCanvas.drawAudio(this.audio).then(it => this.ticks = it)
+    await this.spectrogramCanvas.drawAudio(this.audio).then(it => this.ticks = it)
+    await this.spectrogramCanvas.drawLine(this.freqArrays['pitch'], 0.01, '#7bff4f')
     console.log('Spectrogram mounted!')
   }
 }
