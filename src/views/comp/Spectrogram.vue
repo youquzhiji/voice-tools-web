@@ -60,6 +60,8 @@ export default class Spectrogram extends Vue {
    */
   wheel(e: WheelEvent)
   {
+    const lastWidthScale = this.widthScale
+    const el = e.target as HTMLElement
     let direction = (e.detail < 0 || e.deltaY > 0) ? 1 : -1;
 
     // Shift to micro-adjust
@@ -74,6 +76,20 @@ export default class Spectrogram extends Vue {
     // Normalize
     this.scrollLocation = Math.min(Math.max(0, this.scrollLocation), this.width)
     this.widthScale = Math.max(1, this.widthScale)
+
+    // If zooming changed, adjust image position according to mouse location after zooming
+    if (lastWidthScale != this.widthScale)
+    {
+      // Since zooming is anchored at the center, we need to adjust scroll location as well to
+      // make it seems like anchored at the mouse
+      const rect = el.getBoundingClientRect()
+      const dc = e.clientX - (rect.left + rect.width / 2)
+      const offset = dc / lastWidthScale * this.widthScale - dc
+      console.log(`offset = ${dc} / ${lastWidthScale} * ${this.widthScale} - ${dc} = ${offset}`)
+      this.scrollLocation += offset
+    }
+
+    this.$forceUpdate()
   }
 }
 </script>
