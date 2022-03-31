@@ -1,7 +1,7 @@
 <template>
   <div class="spectrogram f-grow1 fbox-h">
     <div class="canvas-wrapper">
-      <canvas ref="spCanvas" @wheel.prevent="wheel" :style="{transform: `translateX(-${scrollLocation}px) scaleX(${widthScale.toFixed(2)})`}"/>
+      <canvas ref="spCanvas" @wheel.prevent="wheel" :style="{transform: `translateX(${-scrollLocation}px) scaleX(${widthScale})`}"/>
     </div>
 
     <!--      <div class="x-ticks fbox-vcenter">Time</div>-->
@@ -62,19 +62,32 @@ export default class Spectrogram extends Vue {
   {
     const lastWidthScale = this.widthScale
     const el = e.target as HTMLElement
+    const rect = el.getBoundingClientRect()
+
     let direction = (e.detail < 0 || e.deltaY > 0) ? 1 : -1;
 
     // Shift to micro-adjust
     if (e.shiftKey) direction /= 10
 
     // Alt to zoom
-    if (e.altKey) this.widthScale += direction / 2
+    if (e.ctrlKey) this.widthScale += direction / 2
 
     // Scroll
-    else this.scrollLocation += direction * 20
+    else {
+      const pRect = el.parentElement.getBoundingClientRect()
+      let scrollDelta = direction * 20
+
+      // Normalize left margin
+      if (scrollDelta < 0) scrollDelta = Math.max(scrollDelta, rect.left - pRect.left)
+
+      // Normalize right margin
+      else scrollDelta = Math.min(scrollDelta, rect.right - pRect.right)
+
+      // Do scroll
+      this.scrollLocation += scrollDelta
+    }
 
     // Normalize
-    this.scrollLocation = Math.min(Math.max(0, this.scrollLocation), this.width)
     this.widthScale = Math.max(1, this.widthScale)
 
     // If zooming changed, adjust image position according to mouse location after zooming
@@ -82,14 +95,11 @@ export default class Spectrogram extends Vue {
     {
       // Since zooming is anchored at the center, we need to adjust scroll location as well to
       // make it seems like anchored at the mouse
-      const rect = el.getBoundingClientRect()
       const dc = e.clientX - (rect.left + rect.width / 2)
       const offset = dc / lastWidthScale * this.widthScale - dc
       console.log(`offset = ${dc} / ${lastWidthScale} * ${this.widthScale} - ${dc} = ${offset}`)
       this.scrollLocation += offset
     }
-
-    this.$forceUpdate()
   }
 }
 </script>
