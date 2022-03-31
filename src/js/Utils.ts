@@ -116,3 +116,12 @@ export function decodeFreqArray(b64: string, shape: number[]): {[index: string]:
 
     return result
 }
+
+export class Timer
+{
+    start: number
+
+    constructor() { this.reset() }
+    reset() { this.start = performance.now() }
+    log(...args) { console.log(`${(performance.now() - this.start).toFixed(0)} ms -`, ...args); this.reset() }
+}

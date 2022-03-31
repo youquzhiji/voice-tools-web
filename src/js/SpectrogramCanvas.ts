@@ -1,7 +1,7 @@
 import CanvasController from "@/js/CanvasController";
 import * as tf from '@tensorflow/tfjs'
 import chroma from "chroma-js";
-import {extremes, Gradient, mean} from "@/js/Utils";
+import {extremes, Gradient, mean, Timer} from "@/js/Utils";
 import {binToFreq, hzToMel, melToHz, melWeight, ticksLinear, ticksLog2, ticksMel, ticksMel2} from "@/js/scales/Scales";
 import {argMin} from "@tensorflow/tfjs";
 
@@ -140,12 +140,10 @@ export default class SpectrogramCanvas extends CanvasController
      */
     async drawAudio(audio: AudioBuffer)
     {
-        let start = performance.now()
-
+        const timer = new Timer()
         const spec = await melStft(audio.getChannelData(0), 16000)
 
-        console.log(`stft calculation done: ${performance.now() - start} ms`)
-        start = performance.now()
+        timer.log(`Spectrogram - Mel STFT calculation done`)
         console.log(spec)
 
         this.el.width = this.w = spec.length
@@ -175,8 +173,7 @@ export default class SpectrogramCanvas extends CanvasController
             }
         }
         this.ctx.putImageData(img, 0, 0)
-
-        console.log(`drawing done: ${performance.now() - start} ms`)
+        timer.log('Spectrogram - Drawing done.')
 
         return ticksMel2(this.h, 0, audio.sampleRate / 2)
     }
