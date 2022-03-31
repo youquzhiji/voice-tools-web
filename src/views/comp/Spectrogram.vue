@@ -1,6 +1,9 @@
 <template>
   <div class="spectrogram f-grow1 fbox-h">
-    <canvas ref="spCanvas" style="min-height: 0"></canvas>
+    <div class="canvas-wrapper">
+      <canvas ref="spCanvas" @wheel.prevent="wheel" :style="{transform: `translateX(-${scrollLocation}px) scaleX(${widthScale.toFixed(2)})`}"/>
+    </div>
+
     <!--      <div class="x-ticks fbox-vcenter">Time</div>-->
     <div class="y-ticks" v-if="ticks">
       <div class="tick unselectable fbox-h" v-for="t of ticks" :style="{top: `${(1 - t[1]) * 100}%`}">
@@ -29,35 +32,74 @@ export default class Spectrogram extends Vue {
   numberFormat = Intl.NumberFormat('en-US', {notation: "compact", maximumFractionDigits: 1})
   ticks: Ticks = null as never as Ticks
 
+  // Zoom variables
+  widthScale = 1.0
+  scrollLocation = 0
+
   async mounted()
   {
     console.log('Spectrogram mounting...')
     this.spectrogramCanvas = new SpectrogramCanvas(this.$refs.spCanvas)
     await this.spectrogramCanvas.drawAudio(this.audio).then(it => this.ticks = it)
-    await this.spectrogramCanvas.drawLine(this.freqArrays['pitch'], 0.01, '#7bff4f')
+    if (this.freqArrays)
+    {
+      console.log('Frequency overlays updating')
+      await this.spectrogramCanvas.drawLine(this.freqArrays['pitch'], 0.01, '#7bff4f')
+    }
     console.log('Spectrogram mounted!')
+  }
+
+  get width()
+  {
+    return this.$refs.spCanvas.width
+  }
+
+  /**
+   * Mouse wheel event listener
+   * @param e Event
+   */
+  wheel(e: WheelEvent)
+  {
+    let direction = (e.detail < 0 || e.deltaY > 0) ? 1 : -1;
+
+    // Shift to micro-adjust
+    if (e.shiftKey) direction /= 10
+
+    // Alt to zoom
+    if (e.altKey) this.widthScale += direction / 2
+
+    // Scroll
+    else this.scrollLocation += direction * 20
+
+    // Normalize
+    this.scrollLocation = Math.min(Math.max(0, this.scrollLocation), this.width)
+    this.widthScale = Math.max(1, this.widthScale)
   }
 }
 </script>
 
 <style lang="sass" scoped>
+.spectrogram
+  background: #232323
+  color: lightgray
+
 canvas
   height: 100%
-  width: 100%
-  min-width: 0
+  //min-width: 0
+  min-height: 0
+
+.canvas-wrapper
+  width: calc(100% - 30px)
 
 .x-ticks
   width: 100%
-  background: #232323
-  color: lightgray
   height: 30px
   position: relative
 
 .y-ticks
-  background: #232323
-  color: lightgray
   position: relative
-  width: 30px
+  min-width: 30px
+  background: #232323cc
 
   font-size: 10px
   text-align: left
