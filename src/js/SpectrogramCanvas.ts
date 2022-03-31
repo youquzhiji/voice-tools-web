@@ -78,66 +78,6 @@ export default class SpectrogramCanvas extends CanvasController
      *
      * @param audio Full decoded audio
      */
-    // async drawAudio(audio: AudioBuffer)
-    // {
-    //     let start = performance.now()
-    //
-    //     const spec = await stft(audio.getChannelData(0))
-    //
-    //     console.log(`stft calculation done: ${performance.now() - start} ms`)
-    //     start = performance.now()
-    //     console.log(spec)
-    //
-    //     this.el.width = this.w = spec.length
-    //
-    //     const [min, max] = extremes(spec.flatMap(it => extremes(it)))
-    //     const range = max - min
-    //
-    //     function createArray(max: number, resolution: number)
-    //     {
-    //         return Array.from(Array(Math.floor(resolution)).keys()).map(i => i / resolution * max)
-    //     }
-    //
-    //     // Precompute mapping
-    //     const mappedMel = createArray(hzToMel(1024), 1000).map(i => melToHz(i))
-    //     const mapping = Array.from(Array(this.h).keys()).map(y => Math.floor(mappedMel[Math.floor(y / this.h * mappedMel.length)]))
-    //
-    //     // Draw each pixel
-    //     const img = this.ctx.createImageData(this.w, this.h)
-    //     const imgA = img.data
-    //     const w4 = this.w * 4
-    //     const gradient = new Gradient(chroma.scale(['#232323',
-    //         '#4F1879', '#B43A78', '#F98766', '#FCFAC0']), 1000);
-    //     for (let x = 0; x < this.w; x++)
-    //     {
-    //         const d = spec[x]
-    //         const x4 = x * 4
-    //
-    //         for (let y = 0; y < this.h; y++)
-    //         {
-    //             const iCur = mapping[y]
-    //             const iNext = mapping[y + 1]
-    //             const area = d.subarray(iCur, iNext == iCur ? iNext + 1 : iNext)
-    //
-    //             // Draw
-    //             const i = (this.h - y - 1) * w4 + x4;
-    //             [imgA[i], imgA[i + 1], imgA[i + 2]] = gradient.get((mean(area) - min) / range)
-    //             imgA[i + 3] = 255
-    //         }
-    //     }
-    //     this.ctx.putImageData(img, 0, 0)
-    //
-    //     console.log(`drawing done: ${performance.now() - start} ms`)
-    //
-    //     return ticksMel2(this.h, 0, audio.sampleRate / 2)
-    // }
-
-
-    /**
-     * Draw full audio
-     *
-     * @param audio Full decoded audio
-     */
     async drawAudio(audio: AudioBuffer)
     {
         const timer = new Timer()
