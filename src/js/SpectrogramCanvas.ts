@@ -94,6 +94,7 @@ export default class SpectrogramCanvas extends CanvasController
             }
         }
         this.ctx.putImageData(img, 0, 0)
+        this.ctx.closePath()
 
         timer.log('Spectrogram - Drawing done.')
 
@@ -110,25 +111,29 @@ export default class SpectrogramCanvas extends CanvasController
     async drawLine(lineData: Float32Array, timeScale: number, color: string)
     {
         console.log('Drawing line...')
+        console.log(lineData.length)
         const xLen = lineData.length / this.w
+        console.log(xLen)
         let lastMean: number | null = null
         const maxMel = hzToMel(8000)
-        // console.log(maxMel)
+        lineData = lineData.map(it => this.h - hzToMel(it) / maxMel * this.h)
 
         for (let x = 0; x < this.w; x++)
         {
-            const windowMean = mean(lineData.subarray(xLen * x, xLen * (x + 1)))
-            // if (windowMean != null) console.log(windowMean.toFixed(0), hzToMel(windowMean) / maxMel * this.h)
+            const windowMean = mean(lineData.subarray(xLen * x, Math.ceil(xLen * (x + 1))))
 
-            if (lastMean != null && windowMean != null)
+            if (windowMean != null)
             {
-                this.ctx.moveTo(x - 1, this.h - hzToMel(lastMean) / maxMel * this.h)
-                this.ctx.lineTo(x, this.h - hzToMel(windowMean) / maxMel * this.h)
-                this.ctx.stroke()
-                this.ctx.strokeStyle = color
+                if (lastMean != null)
+                    this.ctx.lineTo(x, windowMean)
+                else
+                    this.ctx.moveTo(x, windowMean)
             }
 
             lastMean = windowMean
         }
+        this.ctx.strokeStyle = color
+        this.ctx.stroke()
+        this.ctx.closePath()
     }
 }
