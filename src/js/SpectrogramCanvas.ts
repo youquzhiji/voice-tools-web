@@ -2,56 +2,7 @@ import CanvasController from "@/js/CanvasController";
 import * as tf from '@tensorflow/tfjs'
 import chroma from "chroma-js";
 import {extremes, Gradient, mean, Timer} from "@/js/Utils";
-import {binToFreq, hzToMel, melToHz, melWeight, ticksLinear, ticksLog2, ticksMel, ticksMel2} from "@/js/scales/Scales";
-import {argMin} from "@tensorflow/tfjs";
-
-/**
- * Convert power spectrum signal to decibel signal inspired by python's librosa library.
- *
- * @param ps Power spectrum
- * @param aMin
- * @param maxDb
- */
-function powerToDb(ps: Float32Array[], aMin: number = 1e-10, maxDb: number = 80): Float32Array[]
-{
-    const ref = 1
-    const refFactor = 10 * Math.log10(Math.max(aMin, ref))
-    const out: Float32Array[] = []
-
-    for (let amplitudes of ps)
-    {
-        const a = amplitudes.map(n => 10 * Math.log10(Math.min(n, aMin)) - refFactor)
-
-        if (maxDb)
-        {
-            const min = extremes(a)[1] - maxDb
-            for (let i in a) a[i] = Math.max(a[i], min)
-        }
-    }
-
-    return out
-}
-
-/**
- * Calculate stft spectrogram
- *
- * @param data Decoded audio waveform data
- * @param hopLen Hop length
- * @param winLen Window length (aka. n_fft)
- */
-async function stft(data: Float32Array, hopLen: number = 512, winLen: number = 2048): Promise<Float32Array[]>
-{
-    const stft = tf.signal.stft(tf.tensor1d(data), winLen, hopLen).abs()
-    const array1d = await stft.data() as never as Float32Array
-    const out = []
-
-    const [xLen, yLen] = stft.shape
-
-    for (let i = 0; i < xLen; i++)
-        out.push(array1d.subarray(i * yLen, (i + 1) * yLen))
-
-    return out
-}
+import {hzToMel, melWeight, ticksMel2} from "@/js/scales/Scales";
 
 
 export async function melStft(data: Float32Array, sr: number, hopLen: number = 512, winLen: number = 2048)
@@ -68,6 +19,30 @@ export async function melStft(data: Float32Array, sr: number, hopLen: number = 5
         out.push(array1d.subarray(i * yLen, (i + 1) * yLen))
 
     return out
+}
+
+
+/**
+ * Draw a pixel at a specific point
+ *
+ * @param imgData Image data
+ * @param x4 4 * x
+ * @param y y
+ * @param w4 4 * w
+ * @param h h
+ * @param r Red (0-255)
+ * @param g Green (0-255)
+ * @param b Blue (0-255)
+ * @param a Alpha (0-255)
+ */
+export function drawAt(imgData: Uint8ClampedArray, x4: number, y: number, w4: number, h: number,
+                       r: number, g: number, b: number, a: number = 255)
+{
+    const i = (h - y - 1) * w4 + x4
+    imgData[i] = r
+    imgData[i + 1] = g
+    imgData[i + 2] = b
+    imgData[i + 3] = a
 }
 
 
