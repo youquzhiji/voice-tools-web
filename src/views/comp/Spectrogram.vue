@@ -37,6 +37,7 @@ export default class Spectrogram extends Vue {
   // Zoom variables
   widthScale = 1.0
   scrollLocation = 0
+  minWidthScale = 1
 
   async mounted()
   {
@@ -49,6 +50,14 @@ export default class Spectrogram extends Vue {
       await this.spectrogramCanvas.drawLine(this.freqArrays['pitch'], 0.032, '#7bff4f')
     }
     console.log('Spectrogram mounted!')
+
+    // Fix: If the image is smaller than the screen, scrolling will break
+    const wt = this.$refs.spCanvas.getBoundingClientRect().width
+    const wp = this.$refs.spCanvas.parentElement.getBoundingClientRect().width
+    if (wt * this.widthScale < wp) {
+      this.widthScale = wp / wt
+      this.minWidthScale = this.widthScale
+    }
   }
 
   get width()
@@ -90,7 +99,7 @@ export default class Spectrogram extends Vue {
     }
 
     // Normalize
-    this.widthScale = Math.max(1, this.widthScale)
+    this.widthScale = Math.max(this.minWidthScale, this.widthScale)
 
     // If zooming changed, adjust image position according to mouse location after zooming
     if (lastWidthScale != this.widthScale)
