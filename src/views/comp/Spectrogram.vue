@@ -18,6 +18,7 @@ import {Options, Vue} from 'vue-class-component';
 import {Ticks} from "@/js/scales/Scales";
 import SpectrogramCanvas from "@/js/SpectrogramCanvas";
 import {Prop} from "vue-property-decorator";
+import {Timer} from "@/js/Utils";
 
 @Options({components: {}})
 export default class Spectrogram extends Vue {
@@ -41,15 +42,21 @@ export default class Spectrogram extends Vue {
 
   async mounted()
   {
-    console.log(`Spectrogram mounting... ${this.spec.length} * ${this.spec[0].length}, sr=${this.sr}`)
+    const timer = new Timer()
+    timer.log(`Spectrogram mounting... ${this.spec.length} * ${this.spec[0].length}, sr=${this.sr}`)
     this.spectrogramCanvas = new SpectrogramCanvas(this.$refs.spCanvas)
     await this.spectrogramCanvas.drawData(this.spec, this.sr).then(it => this.ticks = it)
+    timer.log('Data draw complete')
+
     if (this.freqArrays)
     {
       console.log('Frequency overlays updating')
       await this.spectrogramCanvas.drawLine(this.freqArrays['pitch'], 0.032, '#7bff4f')
+      await this.spectrogramCanvas.drawLine(this.freqArrays['f1'], 0.032, '#7bff4f')
+      await this.spectrogramCanvas.drawLine(this.freqArrays['f2'], 0.032, '#7bff4f')
+      await this.spectrogramCanvas.drawLine(this.freqArrays['f3'], 0.032, '#7bff4f')
+      timer.log('Lines drawn')
     }
-    console.log('Spectrogram mounted!')
 
     // Fix: If the image is smaller than the screen, scrolling will break
     const wt = this.$refs.spCanvas.getBoundingClientRect().width
@@ -58,6 +65,7 @@ export default class Spectrogram extends Vue {
       this.widthScale = wp / wt
       this.minWidthScale = this.widthScale
     }
+    timer.log('Spectrogram mounted!')
   }
 
   get width()
@@ -98,6 +106,9 @@ export default class Spectrogram extends Vue {
       this.scrollLocation += scrollDelta
     }
 
+    // TODO: Fix the problem where if you zoom in at the border, then scroll to the very border,
+    //  then zoom out, it might appear out-of-bounds
+
     // Normalize
     this.widthScale = Math.max(this.minWidthScale, this.widthScale)
 
@@ -118,6 +129,7 @@ export default class Spectrogram extends Vue {
 .spectrogram
   background: #232323
   color: lightgray
+  overflow: hidden
 
 canvas
   height: 100%
