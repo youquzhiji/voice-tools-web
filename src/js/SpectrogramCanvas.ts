@@ -60,8 +60,14 @@ export default class SpectrogramCanvas extends CanvasController
 
         timer.log(`Spectrogram - Mel STFT calculation done`)
         console.log(spec)
+        return await this.drawData(spec, 16000)
+    }
 
-        this.el.width = this.w = spec.length
+    async drawData(spec: Float32Array[], sr: number)
+    {
+        const timer = new Timer()
+        this.el.width = this.w = spec.length * 2
+        // this.el.height = this.h = spec[0].length
 
         const [min, max] = extremes(spec.flatMap(it => extremes(it)))
         const range = max - min
@@ -72,7 +78,7 @@ export default class SpectrogramCanvas extends CanvasController
         const w4 = this.w * 4
         const gradient = new Gradient(chroma.scale(['#232323',
             '#4F1879', '#B43A78', '#F98766', '#FCFAC0']), 1000);
-        for (let x = 0; x < this.w; x++)
+        for (let x = 0; x < spec.length; x++)
         {
             const d = spec[x]
             const x4 = x * 4
@@ -82,15 +88,16 @@ export default class SpectrogramCanvas extends CanvasController
                 const value = d[Math.floor(y / this.h * d.length)]
 
                 // Draw
-                const i = (this.h - y - 1) * w4 + x4;
-                [imgA[i], imgA[i + 1], imgA[i + 2]] = gradient.get((value - min) / range)
-                imgA[i + 3] = 255
+                const color = gradient.get((value - min) / range)
+                drawAt(imgA, 2 * x4, y, w4, this.h, color[0], color[1], color[2])
+                drawAt(imgA, 2 * x4 + 4, y, w4, this.h, color[0], color[1], color[2])
             }
         }
         this.ctx.putImageData(img, 0, 0)
+
         timer.log('Spectrogram - Drawing done.')
 
-        return ticksMel2(this.h, 0, audio.sampleRate / 2)
+        return ticksMel2(this.h, 0, sr / 2)
     }
 
     /**
