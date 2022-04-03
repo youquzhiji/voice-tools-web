@@ -24,17 +24,18 @@
       </div>
 
       <!-- Spectrogram View -->
-      <div class="result-tab" :style="activeTab === 1 ? {} : {display: 'none'}">
+      <div class="result-tab card shadow" :style="activeTab === 1 ? {} : {display: 'none'}">
         <Spectrogram v-if="audio" :audio="audio" :freq-arrays="freqArrays"/>
       </div>
 
       <!-- Classification Results -->
-      <div class="result-tab" v-if="activeTab === 2">
-        <ClassificationResults v-if="audio" :audio="audio" :stats="stats" :ml="ml"/>
+      <div class="result-tab card shadow" v-if="activeTab === 2">
+        <ClassificationResults v-if="audio && stats && ml" :audio="audio" :stats="stats" :ml="ml"/>
+        <Loading v-else></Loading>
       </div>
 
       <!-- Pitch vs Formant -->
-      <div class="result-tab" v-if="activeTab === 3">
+      <div class="result-tab card shadow" v-if="activeTab === 3">
       </div>
     </div>
   </div>
@@ -44,11 +45,13 @@
 import {ElMessage} from "element-plus";
 import {Options, Vue} from "vue-class-component";
 import Spectrogram from "@/views/comp/Spectrogram.vue";
+import Loading from "@/views/comp/Loading.vue";
 import Waveform from "@/views/comp/Waveform.vue";
 import ClassificationResults, {MLFrame, StatsResult} from "@/views/comp/ClassificationResults.vue";
-import {decodeFreqArray} from "@/js/Utils";
+import {decodeFreqArray, Timer} from "@/js/Utils";
+import {getSetting} from "@/js/Setting";
 
-@Options({components: {ClassificationResults, Waveform, Spectrogram}})
+@Options({components: {ClassificationResults, Waveform, Spectrogram, Loading}})
 export default class Home extends Vue
 {
   // Canvas HTML elements
@@ -58,9 +61,9 @@ export default class Home extends Vue
 
   // Audio (null if no audio is provided)
   audio: AudioBuffer = null as never as AudioBuffer
-  stats: StatsResult
-  ml: MLFrame[]
-  freqArrays: {[index: string]: Float32Array}
+  stats: StatsResult = null as never as StatsResult
+  ml: MLFrame[] = null as never as []
+  freqArrays: {[index: string]: Float32Array} = null as never as {}
 
   activeTab = 1
 
@@ -79,6 +82,8 @@ export default class Home extends Vue
     const item = e.dataTransfer.items[0]
     if (item.kind != 'file') return ElMessage.error(`Error: The item dropped must be a file, not a ${item.kind}`)
 
+    const timer = new Timer()
+
     const file = item.getAsFile()!
 
     console.log(`File Dropped: ${file.name}\n` +
@@ -89,12 +94,13 @@ export default class Home extends Vue
     // Upload file to be processed
     let formData = new FormData()
     formData.append('file', file)
-    let res = await fetch('http://localhost:8000/process', {method: 'POST', body: formData})
-    let json = await res.json()
-    this.stats = json.result
-    this.ml = json.ml
-    this.freqArrays = decodeFreqArray(json.freq_array.bytes, json.freq_array.shape)
-    console.log(json)
+    let res = fetch(`${getSetting('backend.url').val}/process`, {method: 'POST', body: formData}).then(async it => {
+      let json = await it.json()
+      this.stats = json.result
+      this.ml = json.ml
+      this.freqArrays = decodeFreqArray(json.freq_array.bytes, json.freq_array.shape)
+      console.log(json)
+    })
 
     // Read file
     // TODO: If file type is not supported, convert file on backend
@@ -102,6 +108,8 @@ export default class Home extends Vue
     const ctx = new AudioContext({sampleRate: 16000})
     this.audio = await ctx.decodeAudioData(buf)
     const data = this.audio.getChannelData(0)
+
+    timer.log('File decoded')
 
     console.log(`Audio Loaded:\n` +
         `- Sample Rate: ${this.audio.sampleRate} Hz\n` +
@@ -156,12 +164,8 @@ export default class Home extends Vue
     overflow-x: hidden
 
     // Card effect
-    //box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)
-    box-shadow: 0 2px 12px -2px rgb(0 0 0 / 25%)
-    border-radius: 10px
     margin-bottom: 20px
     z-index: 2
-    background: white
 
   .result-nav
     display: flex
