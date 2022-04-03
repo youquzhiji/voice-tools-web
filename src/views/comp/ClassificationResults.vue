@@ -87,6 +87,7 @@ export default class ClassificationResults extends Vue
   {
     $(`.feature`).accordion({collapsible: true, header: '.classification-bar', heightStyle: 'content',
       active: false, animate: {easing: 'swing', duration: 500}})
+    $(`.feature.pitch`).accordion({active: 0})
   }
 
   get totalTime(): number
