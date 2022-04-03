@@ -106,7 +106,7 @@ export class Gradient
 export function decodeFreqArray(b64: string, shape: number[]): {[index: string]: Float32Array}
 {
     const array = new Float32Array(buffer.Buffer.from(b64, 'base64').buffer)
-    const rows = 4
+    const rows = shape[0]
     const cols = array.length / rows
     const keys = ['pitch', 'f1', 'f2', 'f3']
     const result = {}
