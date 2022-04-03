@@ -122,6 +122,19 @@ export function decodeFreqArray(b64: string, shape: number[]): {[index: string]:
     return result
 }
 
+export function decodeNdArray(b64: string, shape: number[]): Float32Array[]
+{
+    const array = new Float32Array(buffer.Buffer.from(b64, 'base64').buffer)
+    const rows = shape[0]
+    const cols = array.length / rows
+    const result = []
+
+    for (let x = 0; x < rows; x++)
+        result.push(array.slice(cols * x, cols * (x + 1)))
+
+    return result
+}
+
 export class Timer
 {
     start: number
