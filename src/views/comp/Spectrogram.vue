@@ -70,7 +70,7 @@ export default class Spectrogram extends Vue {
     if (e.shiftKey) direction /= 10
 
     // Alt to zoom
-    if (e.ctrlKey) this.widthScale += direction / 2
+    if (e.ctrlKey) this.widthScale -= direction / 2
 
     // Scroll
     else {
