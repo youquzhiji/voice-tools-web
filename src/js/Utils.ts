@@ -146,7 +146,7 @@ export class Timer
 
 export interface RequestParams {
     method?: str
-    params?: dict<str, str>
+    params?: dict<str, any>
     body?: any
     file?: File
     args?: dict<str, any>
@@ -161,13 +161,15 @@ export async function request(endpoint: str, p: RequestParams = {}): Promise<Res
     url.search = new URLSearchParams(p.params ?? {}).toString()
     const args = p.args ?? {}
 
-    if (!('method' in args)) args['method'] = p.method ?? 'GET'
+    if (!('method' in args)) args.method = p.method ?? 'GET'
+
     if (p.file)
     {
-        if (p.body && !(p.body instanceof FormData)) p.body = new FormData()
+        if (!p.body || !(p.body instanceof FormData)) p.body = new FormData()
         p.body.append('file', p.file)
+        if (args.method == 'GET') args.method = 'POST'
     }
-    if (p.body) args['body'] = p.body
+    if (p.body) args.body = p.body
 
     return await fetch(url.toString(), args)
 }
