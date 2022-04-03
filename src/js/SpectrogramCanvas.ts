@@ -97,7 +97,7 @@ export default class SpectrogramCanvas extends CanvasController
 
         timer.log('Spectrogram - Drawing done.')
 
-        return ticksMel2(this.h, 0, sr / 2)
+        return ticksMel2(this.h, 0, 8000)
     }
 
     /**
