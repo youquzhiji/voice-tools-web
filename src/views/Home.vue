@@ -49,7 +49,7 @@ import Spectrogram from "@/views/comp/Spectrogram.vue";
 import Loading from "@/views/comp/Loading.vue";
 import Waveform from "@/views/comp/Waveform.vue";
 import ClassificationResults, {MLFrame, StatsResult} from "@/views/comp/ClassificationResults.vue";
-import {decodeFreqArray, Timer} from "@/js/Utils";
+import {decodeFreqArray, decodeNdArray, request, Timer} from "@/js/Utils";
 import {getSetting} from "@/js/Setting";
 import {melStft} from "@/js/SpectrogramCanvas";
 
@@ -87,6 +87,7 @@ export default class Home extends Vue
     if (item.kind != 'file') return ElMessage.error(`Error: The item dropped must be a file, not a ${item.kind}`)
 
     const timer = new Timer()
+    const localSpec = getSetting('spec.local').val
 
     const file = item.getAsFile()!
 
@@ -96,31 +97,38 @@ export default class Home extends Vue
         `- Type: ${file.type}`)
 
     // Upload file to be processed
-    let formData = new FormData()
-    formData.append('file', file)
-    let res = fetch(`${getSetting('backend.url').val}/process`, {method: 'POST', body: formData}).then(async it => {
+    let res = request(`/process`, {file: file, params: {with_mel_spect: !localSpec}}).then(async it => {
       let json = await it.json()
       this.stats = json.result
       this.ml = json.ml
+      if (!localSpec)
+      {
+        this.specSr = json.spec_sr
+        this.spec = decodeNdArray(json.spec.bytes, json.spec.shape)
+      }
       this.freqArrays = decodeFreqArray(json.freq_array.bytes, json.freq_array.shape)
       console.log(json)
     })
 
     // Read file
-    // TODO: If file type is not supported, convert file on backend
     const buf = await file.arrayBuffer()
     const ctx = new AudioContext({sampleRate: 16000})
     this.audio = await ctx.decodeAudioData(buf)
     const data = this.audio.getChannelData(0)
 
-    timer.log('File decoded')
-
-    console.log(`Audio Loaded:\n` +
+    timer.log(`Audio Loaded:\n` +
         `- Sample Rate: ${this.audio.sampleRate} Hz\n` +
         `- Array Length: ${this.audio.length}\n` +
         `- Duration: ${this.audio.duration} sec\n` +
         `- Number of Channels: ${this.audio.numberOfChannels}\n`)
-    // console.log(data)
+
+    // Calculate mel spectrogram locally (around 100x slower than tf backend)
+    if (localSpec)
+    {
+      this.spec = await melStft(data, 16000)
+      this.specSr = 16000
+      timer.log(`Spectrogram - Mel STFT calculation done`)
+    }
   }
 }
 </script>

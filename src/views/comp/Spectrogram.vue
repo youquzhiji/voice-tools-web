@@ -40,13 +40,13 @@ export default class Spectrogram extends Vue {
 
   async mounted()
   {
-    console.log('Spectrogram mounting...')
+    console.log(`Spectrogram mounting... ${this.spec.length} * ${this.spec[0].length}, sr=${this.sr}`)
     this.spectrogramCanvas = new SpectrogramCanvas(this.$refs.spCanvas)
-    await this.spectrogramCanvas.drawAudio(this.audio).then(it => this.ticks = it)
+    await this.spectrogramCanvas.drawData(this.spec, this.sr).then(it => this.ticks = it)
     if (this.freqArrays)
     {
       console.log('Frequency overlays updating')
-      await this.spectrogramCanvas.drawLine(this.freqArrays['pitch'], 0.01, '#7bff4f')
+      await this.spectrogramCanvas.drawLine(this.freqArrays['pitch'], 0.032, '#7bff4f')
     }
     console.log('Spectrogram mounted!')
   }
