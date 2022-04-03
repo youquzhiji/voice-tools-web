@@ -8,7 +8,7 @@
       <span class="drop-label">Drop Here</span>
     </div>
 
-    <div class="results" :style="{visibility: audio ? 'unset' : 'hidden'}">
+    <div class="results" v-if="audio">
       <Waveform :audio="audio" v-if="audio" />
 
       <div class="result-nav unselectable anim">
@@ -25,12 +25,13 @@
 
       <!-- Spectrogram View -->
       <div class="result-tab card shadow" :style="activeTab === 1 ? {} : {display: 'none'}">
-        <Spectrogram v-if="audio" :audio="audio" :freq-arrays="freqArrays"/>
+        <Spectrogram v-if="spec" :spec="spec" :sr="specSr" :freq-arrays="freqArrays"/>
+        <Loading v-else></Loading>
       </div>
 
       <!-- Classification Results -->
       <div class="result-tab card shadow" v-if="activeTab === 2">
-        <ClassificationResults v-if="audio && stats && ml" :audio="audio" :stats="stats" :ml="ml"/>
+        <ClassificationResults v-if="stats" :stats="stats" :ml="ml"/>
         <Loading v-else></Loading>
       </div>
 
@@ -50,6 +51,7 @@ import Waveform from "@/views/comp/Waveform.vue";
 import ClassificationResults, {MLFrame, StatsResult} from "@/views/comp/ClassificationResults.vue";
 import {decodeFreqArray, Timer} from "@/js/Utils";
 import {getSetting} from "@/js/Setting";
+import {melStft} from "@/js/SpectrogramCanvas";
 
 @Options({components: {ClassificationResults, Waveform, Spectrogram, Loading}})
 export default class Home extends Vue
@@ -62,7 +64,9 @@ export default class Home extends Vue
   // Audio (null if no audio is provided)
   audio: AudioBuffer = null as never as AudioBuffer
   stats: StatsResult = null as never as StatsResult
-  ml: MLFrame[] = null as never as []
+  ml: MLFrame[]
+  spec: Float32Array[] = null as never as []
+  specSr: number
   freqArrays: {[index: string]: Float32Array} = null as never as {}
 
   activeTab = 1

@@ -25,9 +25,11 @@ export default class Spectrogram extends Vue {
     spCanvas: HTMLCanvasElement
   }
 
-  @Prop() audio!: AudioBuffer
-  @Prop() freqArrays!: {[index: string]: Float32Array}
-  spectrogramCanvas!: SpectrogramCanvas
+  @Prop() spec: Float32Array[]
+  @Prop() sr: number
+  @Prop() freqArrays: {[index: string]: Float32Array}
+
+  spectrogramCanvas: SpectrogramCanvas
 
   numberFormat = Intl.NumberFormat('en-US', {notation: "compact", maximumFractionDigits: 1})
   ticks: Ticks = null as never as Ticks
