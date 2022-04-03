@@ -108,7 +108,6 @@ export default class Spectrogram extends Vue {
       // make it seems like anchored at the mouse
       const dc = e.clientX - (rect.left + rect.width / 2)
       const offset = dc / lastWidthScale * this.widthScale - dc
-      console.log(`offset = ${dc} / ${lastWidthScale} * ${this.widthScale} - ${dc} = ${offset}`)
       this.scrollLocation += offset
     }
   }
