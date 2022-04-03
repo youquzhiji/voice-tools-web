@@ -63,7 +63,7 @@ export class Setting<T>
 }
 
 export const options: Setting<any>[] = [
-    new Setting("spectrogram.local", "**Compute spectrogram locally** - enable if you have *really* bad internet like <1 MB/s", false),
+    new Setting("spec.local", "**Compute spectrogram locally** - enable if you have *really* bad internet like <1 MB/s", false),
     new Setting("backend.url", "**Backend host** - you can run your own backend to speed up things! [read more]()", "http://localhost:8000")
 ]
 

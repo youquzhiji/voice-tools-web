@@ -1,9 +1,14 @@
 import chroma from "chroma-js";
 import buffer from "buffer";
 import {FeatureLiteral} from "@/views/comp/ClassificationResults.vue";
+import {getSetting} from "@/js/Setting";
 
 export type NumberArray = Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array |
     Float32Array | Float64Array | number[] | Array<number>
+
+export type dict<T extends string | symbol | number, F> = {[index in T]: F}
+
+export type str = string
 
 export function sum(arr: NumberArray): number
 {
@@ -124,4 +129,32 @@ export class Timer
     constructor() { this.reset() }
     reset() { this.start = performance.now() }
     log(...args) { console.log(`${(performance.now() - this.start).toFixed(0)} ms -`, ...args); this.reset() }
+}
+
+export interface RequestParams {
+    method?: str
+    params?: dict<str, str>
+    body?: any
+    file?: File
+    args?: dict<str, any>
+}
+
+/**
+ * More convenient request
+ */
+export async function request(endpoint: str, p: RequestParams = {}): Promise<Response>
+{
+    const url = new URL(endpoint.startsWith('http') ? endpoint : getSetting('backend.url').val + endpoint)
+    url.search = new URLSearchParams(p.params ?? {}).toString()
+    const args = p.args ?? {}
+
+    if (!('method' in args)) args['method'] = p.method ?? 'GET'
+    if (p.file)
+    {
+        if (p.body && !(p.body instanceof FormData)) p.body = new FormData()
+        p.body.append('file', p.file)
+    }
+    if (p.body) args['body'] = p.body
+
+    return await fetch(url.toString(), args)
 }
