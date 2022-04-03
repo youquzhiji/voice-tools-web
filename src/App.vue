@@ -9,6 +9,11 @@
       <i class="fa-solid fa-circle-info"></i>
       <span>About</span>
     </router-link>
+
+    <router-link class="rlink" to="/settings">
+      <i class="fa-solid fa-cog"></i>
+      <span>Settings</span>
+    </router-link>
   </div>
 
   <!-- route outlet -->
@@ -31,7 +36,7 @@ import {Back} from "@element-plus/icons-vue";
   -webkit-font-smoothing: antialiased
   -moz-osx-font-smoothing: grayscale
   text-align: center
-  color: #2c3e50
+  color: white
   background: #6a6464
 
   display: flex

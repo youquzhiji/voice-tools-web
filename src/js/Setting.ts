@@ -10,7 +10,7 @@ export class Setting<T>
     def: T
     type: string
 
-    ref: Ref<T>
+    cache: T
 
     constructor(name: string, desc: string, def: T)
     {
@@ -18,7 +18,7 @@ export class Setting<T>
         this.desc = desc
         this.def = def
         this.type = typeof def
-        this.ref = ref(this.val_uncached) as Ref<T>
+        this.cache = this.val_uncached
     }
 
     /**
@@ -35,9 +35,8 @@ export class Setting<T>
      */
     get val(): T
     {
-        if (this.ref) return this.ref.value
-        this.ref.value = this.val_uncached
-        return this.ref.value
+        if (this.cache) return this.cache
+        return this.cache = this.val_uncached
     }
 
     /**
@@ -48,13 +47,13 @@ export class Setting<T>
     set val(val: T)
     {
         localStorage.setItem(this.key, JSON.stringify(val))
-        this.ref.value = val
+        this.cache = val
     }
 
     reset()
     {
         localStorage.removeItem(this.key)
-        this.ref.value = this.def
+        this.cache = this.def
     }
 
     get modified()
