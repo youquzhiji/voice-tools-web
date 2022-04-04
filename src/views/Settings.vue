@@ -10,11 +10,11 @@
         <div class="desc" v-html="marked(option.desc)" />
 
         <div v-if="option.type === 'boolean'">
-          <el-switch v-model="option.cache" active-color="pink"/>
+          <el-switch v-model="option.val" active-color="pink"/>
         </div>
 
         <div v-if="option.type === 'string'">
-          <hy-input v-model="option.cache" />
+          <hy-input v-model="option.val" />
         </div>
 
         <div class="modified-text" v-if="option.modified">
