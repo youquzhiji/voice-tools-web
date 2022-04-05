@@ -12,7 +12,7 @@
 
     <div class="title">Full Audio Statistics</div>
 
-    <div class="features-bar" v-if="stats.value">
+    <div class="features-bar" v-if="stats.fem_prob">
       <div class="feature" :class="f" v-for="f in ['pitch', 'f1', 'f2', 'f3', 'tilt']" ref="feature">
         <div class="description">
           <span class="name">{{featureDescriptions[f].split(' - ')[0]}}</span>
