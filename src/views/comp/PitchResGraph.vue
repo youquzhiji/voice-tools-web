@@ -28,12 +28,15 @@ const scaleOptions: ScaleOptions = {
 }
 
 const sharedAnnotationOptions = {
-  backgroundColor: 'rgba(255,255,255,0.38)',
+  // backgroundColor: 'rgba(255,255,255,0.38)',
   borderRadius: 10,
   font: {
     size: 15
   }
 }
+
+const gray = 'rgba(136,136,136,0.76)'
+const labelMargin = 0.03
 
 
 @Options({components: {BubbleChart}})
@@ -55,34 +58,58 @@ export default class PitchResGraph extends Vue
       },
       annotation: {
         annotations: {
-          topLeft: {...sharedAnnotationOptions,
-            type: 'label',
-            xValue: 0.25,
-            yValue: 0.75,
-            content: ['Unnatural'],
-            color: 'rgba(255,148,8,0.76)',
-          },
           topRight: {...sharedAnnotationOptions,
             type: 'label',
             xValue: 0.75,
             yValue: 0.75,
-            content: ['Feminine'],
+            content: ['Feminine', 'Average'],
             color: 'rgba(255,65,65,0.46)',
-          },
-          bottomRight: {...sharedAnnotationOptions,
-            type: 'label',
-            xValue: 0.75,
-            yValue: 0.25,
-            content: ['Unnatural'],
-            color: 'rgba(255,148,8,0.76)',
           },
           bottomLeft: {...sharedAnnotationOptions,
             type: 'label',
             xValue: 0.25,
             yValue: 0.25,
-            content: ['Masculine'],
+            content: ['Masculine', 'Average'],
             color: 'rgba(75,138,255,0.76)',
-          }
+          },
+          center: {...sharedAnnotationOptions,
+            type: 'label',
+            xValue: 0.5,
+            yValue: 0.5,
+            content: ['Androgyny'],
+            color: gray,
+            backgroundColor: 'white',
+          },
+          lowPitch: {...sharedAnnotationOptions,
+            type: 'label',
+            xValue: 0.5,
+            yValue: labelMargin,
+            content: ['Low Pitch'],
+            color: gray
+          },
+          highPitch: {...sharedAnnotationOptions,
+            type: 'label',
+            xValue: 0.5,
+            yValue: 1 - labelMargin,
+            content: ['High Pitch'],
+            color: gray
+          },
+          lowResonance: {...sharedAnnotationOptions,
+            type: 'label',
+            xValue: labelMargin,
+            yValue: 0.5,
+            rotation: -90,
+            content: ['Dark Resonance'],
+            color: gray
+          },
+          highResonance: {...sharedAnnotationOptions,
+            type: 'label',
+            xValue: 1 - labelMargin,
+            yValue: 0.5,
+            rotation: 90,
+            content: ['Bright Resonance'],
+            color: gray
+          },
         }
       }
     }
@@ -106,7 +133,7 @@ export default class PitchResGraph extends Vue
 <style lang="sass" scoped>
 #PitchResGraph
   height: 100%
-  background: linear-gradient(45deg, rgba(129, 218, 255, 0.3), white, rgba(255, 190, 200, 0.3))
+  background: linear-gradient(45deg, rgba(129, 218, 255, 0.4), white, rgba(255, 190, 200, 0.4))
 
   .chart
     height: 100%
