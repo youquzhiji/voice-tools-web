@@ -7,11 +7,12 @@
         <i class="fas fa-exclamation-triangle"></i>
       </div>
       <div class="expl">Please record at least 10 seconds for more accuracy.</div>
+      <div class="expl">(You're audio was {{audioDuration.toFixed(1)}} seconds long)</div>
     </div>
 
     <div class="title">Full Audio Statistics</div>
 
-    <div class="features-bar">
+    <div class="features-bar" v-if="stats.value">
       <div class="feature" :class="f" v-for="f in ['pitch', 'f1', 'f2', 'f3', 'tilt']" ref="feature">
         <div class="description">
           <span class="name">{{featureDescriptions[f].split(' - ')[0]}}</span>
@@ -29,10 +30,13 @@
         </div>
       </div>
     </div>
+    <div class="no-features" v-else>
+      Sorry, audio is too short, no frequency feature was detected.
+    </div>
 
     <div class="title">Machine Learning Classification</div>
 
-    <div class="feature">
+    <div class="feature" v-if="ml.length > 0">
       <div class="description">
         <span class="name">Machine Learning</span>
         <span class="desc">How your voice might sound like to a robot.</span>
@@ -41,6 +45,7 @@
         <div class="frame" v-for="frame of ml" :style="{width: `${(frame[2] - frame[1]) / totalTime * 100}%`, background: getColor(frame)}"/>
       </div>
     </div>
+    <div class="no-features" v-else>Sorry, our model failed to detect voice on this audio.</div>
   </div>
 </template>
 
@@ -228,14 +233,18 @@ export default class ClassificationResults extends Vue
       .percentage-sub.right
         margin-right: -40px
 
+    .ml-bar
+      background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAIAAADZF8uwAAAAGUlEQVQYV2M4gwH+YwCGIasIUwhT25BVBADtzYNYrHvv4gAAAABJRU5ErkJggg==)
+      background-repeat: repeat
 
-.classification-bar.ml-bar
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAIAAADZF8uwAAAAGUlEQVQYV2M4gwH+YwCGIasIUwhT25BVBADtzYNYrHvv4gAAAABJRU5ErkJggg==)
-  background-repeat: repeat
+      .frame
+        height: 100%
+        display: inline-block
 
-  .frame
-    height: 100%
-    display: inline-block
+    .ml-failed
+      background: transparent
+      border: 1px dashed gray
+
 
 .audio-too-short-warning
   margin-top: 30px
@@ -244,4 +253,7 @@ export default class ClassificationResults extends Vue
     > * + *
       margin-left: 15px
   color: #ffbc29
+
+.no-features
+  color: #ff8383
 </style>
