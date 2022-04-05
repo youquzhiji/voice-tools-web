@@ -1,5 +1,14 @@
 <template>
   <div id="ClassificationResults">
+    <div class="audio-too-short-warning" v-if="audioDuration < 10">
+      <div class="head">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>Audio Too Short</span>
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <div class="expl">Please record at least 10 seconds for more accuracy.</div>
+    </div>
+
     <div class="title">Full Audio Statistics</div>
 
     <div class="features-bar">
@@ -78,6 +87,7 @@ export default class ClassificationResults extends Vue
 
   @Prop() stats: StatsResult
   @Prop() ml: MLFrame[]
+  @Prop() audioDuration: number
 
   mounted()
   {
@@ -226,4 +236,12 @@ export default class ClassificationResults extends Vue
   .frame
     height: 100%
     display: inline-block
+
+.audio-too-short-warning
+  margin-top: 30px
+  .head
+    font-size: 1.5em
+    > * + *
+      margin-left: 15px
+  color: #ffbc29
 </style>

@@ -39,7 +39,7 @@
 
       <!-- Classification Results -->
       <div class="result-tab card shadow" v-if="activeTab === 2">
-        <ClassificationResults v-if="stats" :stats="stats" :ml="ml"/>
+        <ClassificationResults v-if="stats && audio" :stats="stats" :ml="ml" :audio-duration="audio.duration"/>
         <Loading v-else></Loading>
       </div>
 
@@ -84,8 +84,6 @@ export default class Home extends Vue
   recorderCompatible = navigator.mediaDevices
   recorder: MediaRecorder = null
   recordChunks = []
-
-  audioUrl = ''
 
   async loadFile(file: File)
   {
@@ -171,14 +169,13 @@ export default class Home extends Vue
     this.recorder = new MediaRecorder(stream, {mimeType: 'audio/webm;codecs=opus'})
 
     // Add data to the recording
-    const audioChunks = []
     this.recorder.addEventListener("dataavailable", e => {
-      audioChunks.push(e.data)
+      this.recordChunks.push(e.data)
     })
 
     // After finish, load as file
     this.recorder.addEventListener("stop", () => {
-      const audioBlob = new Blob(audioChunks, {type: 'audio/webm;codecs=opus'})
+      const audioBlob = new Blob(this.recordChunks, {type: 'audio/webm;codecs=opus'})
       this.loadFile(new File([audioBlob], 'recorded-audio.webm'))
     })
     this.recorder.start()
