@@ -50,6 +50,7 @@ export default class PitchResGraph extends Vue
 <style lang="sass" scoped>
 #PitchResGraph
   height: 100%
+  background: linear-gradient(45deg, rgba(129, 218, 255, 0.3), white, rgba(255, 190, 200, 0.3))
 
   .chart
     height: 100%
