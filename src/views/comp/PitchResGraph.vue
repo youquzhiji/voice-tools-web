@@ -40,6 +40,50 @@ export default class PitchResGraph extends Vue
     plugins: {
       legend: {
         display: false
+      },
+      annotation: {
+        annotations: {
+          topLeft: {
+            type: 'label',
+            xValue: 0.25,
+            yValue: 0.75,
+            content: ['Unnatural'],
+            color: 'rgba(255,148,8,0.76)',
+            font: {
+              size: 15
+            }
+          },
+          topRight: {
+            type: 'label',
+            xValue: 0.75,
+            yValue: 0.75,
+            content: ['Feminine'],
+            color: 'rgba(255,65,65,0.46)',
+            font: {
+              size: 15
+            }
+          },
+          bottomRight: {
+            type: 'label',
+            xValue: 0.75,
+            yValue: 0.25,
+            content: ['Unnatural'],
+            color: 'rgba(255,148,8,0.76)',
+            font: {
+              size: 15
+            }
+          },
+          bottomLeft: {
+            type: 'label',
+            xValue: 0.25,
+            yValue: 0.25,
+            content: ['Masculine'],
+            color: 'rgba(75,138,255,0.76)',
+            font: {
+              size: 15
+            }
+          }
+        }
       }
     }
   }
