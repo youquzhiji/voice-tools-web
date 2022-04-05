@@ -44,7 +44,10 @@ export default class PitchResGraph extends Vue
 {
   @Prop() stats: StatsResult
 
-
+  get position()
+  {
+    return {x: 0.7, y: 0.6}
+  }
 
   options: ChartOptions = {
     maintainAspectRatio: false,
@@ -52,6 +55,7 @@ export default class PitchResGraph extends Vue
       x: {...scaleOptions},
       y: {...scaleOptions, ticks: {...scaleOptions.ticks, padding: -19}},
     },
+    animation: false,
     plugins: {
       legend: {
         display: false
@@ -110,6 +114,14 @@ export default class PitchResGraph extends Vue
             content: ['Bright Resonance'],
             color: gray
           },
+          you: {
+            type: 'label',
+            xValue: this.position.x,
+            yValue: this.position.y,
+            content: ["You"],
+            color: 'rgba(119,119,119,0.63)',
+            font: {size: 11}
+          },
         }
       }
     }
@@ -120,8 +132,11 @@ export default class PitchResGraph extends Vue
     return {
       datasets: [
         {
+          backgroundColor: '#ffffff',
+          borderColor: '#777777',
+          radius: 15,
           data: [
-              {x: 0, y: 0, r: 10}
+              this.position
           ]
         }
       ]
