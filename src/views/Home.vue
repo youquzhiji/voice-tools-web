@@ -1,11 +1,19 @@
 <template>
   <div id="home" ref="el" class="fbox-v">
     <div class="usage" v-if="!audio">
-      Welcome to the voice training tool [TODO: 想一个名字]
+      Welcome to the voice analysis tool!
+      <br>
+      Drop or record an audio to analyze.
     </div>
 
     <div class="drop-box unselectable shadow" @dragover="(e) => e.preventDefault()" @drop="onDrop" v-if="!audio">
-      <span class="drop-label">Drop Here</span>
+      <span class="drop-label" v-if="!dropped">Drop Here</span>
+      <Loading v-else></Loading>
+    </div>
+
+    <div class="drop-box unselectable shadow record clickable" @click="btnRecord" v-if="!audio && recorderCompatible">
+      <span class="drop-label" v-if="!recorder">Record</span>
+      <span class="drop-label" v-else>Stop Recording</span>
     </div>
 
     <div class="results" v-if="audio">
@@ -61,35 +69,28 @@ export default class Home extends Vue
     el: HTMLElement
   }
 
-  // Audio (null if no audio is provided)
-  audio: AudioBuffer = null as never as AudioBuffer
-  stats: StatsResult = null as never as StatsResult
-  ml: MLFrame[]
-  spec: Float32Array[] = null as never as []
-  specSr: number
-  freqArrays: {[index: string]: Float32Array} = null as never as {}
-
+  dropped = false
   activeTab = 1
 
-  // Runs when the user drops an audio file over the drop area
-  async onDrop(e: DragEvent)
+  // Audio (null if no audio is provided)
+  audio: AudioBuffer = null
+  stats: StatsResult = null
+  ml: MLFrame[]
+  spec: Float32Array[] = null
+  specSr: number
+  freqArrays: {[index: string]: Float32Array} = null
+
+  // Recording
+  recorderCompatible = navigator.mediaDevices
+  recorder: MediaRecorder = null
+  recordChunks = []
+
+  audioUrl = ''
+
+  async loadFile(file: File)
   {
-    // Prevent default behavior: Opening the file in a browser tab.
-    e.preventDefault()
-
-    // Check files dropped
-    if (!(e.dataTransfer && e.dataTransfer.items)) return
-    const len = e.dataTransfer.items.length
-    if (len > 1) return ElMessage.error(`Only one file can be analyzed at a time, you dropped ${len}`)
-
-    // Check file type
-    const item = e.dataTransfer.items[0]
-    if (item.kind != 'file') return ElMessage.error(`Error: The item dropped must be a file, not a ${item.kind}`)
-
     const timer = new Timer()
     const localSpec = getSetting('spec.local').val
-
-    const file = item.getAsFile()!
 
     console.log(`File Dropped: ${file.name}\n` +
         `- LastModified: ${file.lastModified}\n` +
@@ -130,6 +131,58 @@ export default class Home extends Vue
       timer.log(`Spectrogram - Mel STFT calculation done`)
     }
   }
+
+  /**
+   * Runs when the user drops an audio file over the drop area
+   */
+  async onDrop(e: DragEvent)
+  {
+    // Prevent default behavior: Opening the file in a browser tab.
+    e.preventDefault()
+    this.dropped = true
+
+    // Check files dropped
+    if (!(e.dataTransfer && e.dataTransfer.items)) return
+    const len = e.dataTransfer.items.length
+    if (len > 1) return ElMessage.error(`Only one file can be analyzed at a time, you dropped ${len}`)
+
+    // Check file type
+    const item = e.dataTransfer.items[0]
+    if (item.kind != 'file') return ElMessage.error(`Error: The item dropped must be a file, not a ${item.kind}`)
+
+    await this.loadFile(item.getAsFile())
+  }
+
+  /**
+   * Click record
+   */
+  async btnRecord()
+  {
+    // Already recording, stop recording
+    if (this.recorder)
+    {
+      this.recorder.stop()
+      this.recorder = null
+      return
+    }
+
+    // Start recording
+    const stream = await navigator.mediaDevices.getUserMedia({audio: {sampleRate: 16000, channelCount: 1}})
+    this.recorder = new MediaRecorder(stream, {mimeType: 'audio/webm;codecs=opus'})
+
+    // Add data to the recording
+    const audioChunks = []
+    this.recorder.addEventListener("dataavailable", e => {
+      audioChunks.push(e.data)
+    })
+
+    // After finish, load as file
+    this.recorder.addEventListener("stop", () => {
+      const audioBlob = new Blob(audioChunks, {type: 'audio/webm;codecs=opus'})
+      this.loadFile(new File([audioBlob], 'recorded-audio.webm'))
+    })
+    this.recorder.start()
+  }
 }
 </script>
 
@@ -150,10 +203,11 @@ export default class Home extends Vue
     max-width: 600px
     margin-left: auto
     margin-right: auto
-    height: 100px
+    height: 200px
     border-radius: 25px
     box-sizing: border-box
     background: white
+    overflow: hidden
 
     display: flex
     align-items: center
@@ -162,6 +216,9 @@ export default class Home extends Vue
     .drop-label
       color: $color-bg
       font-size: 1.5em
+
+  .drop-box.record
+    height: 100px
 
   .results, .result-tab
     display: flex
