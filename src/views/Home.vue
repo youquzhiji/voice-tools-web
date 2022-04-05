@@ -34,17 +34,19 @@
       <!-- Spectrogram View -->
       <div class="result-tab card shadow" :style="activeTab === 1 ? {} : {display: 'none'}">
         <Spectrogram v-if="spec" :spec="spec" :sr="specSr" :freq-arrays="freqArrays"/>
-        <Loading v-else></Loading>
+        <Loading v-else />
       </div>
 
       <!-- Classification Results -->
       <div class="result-tab card shadow" v-if="activeTab === 2">
         <ClassificationResults v-if="stats && audio" :stats="stats" :ml="ml" :audio-duration="audio.duration"/>
-        <Loading v-else></Loading>
+        <Loading v-else />
       </div>
 
       <!-- Pitch vs Formant -->
       <div class="result-tab card shadow" v-if="activeTab === 3">
+        <PitchResGraph v-if="stats" :stats="stats" />
+        <Loading v-else />
       </div>
     </div>
   </div>
@@ -60,8 +62,9 @@ import ClassificationResults, {MLFrame, StatsResult} from "@/views/comp/Classifi
 import {decodeFreqArray, decodeNdArray, request, Timer} from "@/js/Utils";
 import {getSetting} from "@/js/Setting";
 import {melStft} from "@/js/SpectrogramCanvas";
+import PitchResGraph from "@/views/comp/PitchResGraph.vue";
 
-@Options({components: {ClassificationResults, Waveform, Spectrogram, Loading}})
+@Options({components: {PitchResGraph, ClassificationResults, Waveform, Spectrogram, Loading}})
 export default class Home extends Vue
 {
   // Canvas HTML elements

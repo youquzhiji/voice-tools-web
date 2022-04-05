@@ -7,7 +7,7 @@
 <script lang="ts">
 import {Options, Vue} from 'vue-class-component';
 import {BubbleChart} from "vue-chart-3";
-import {ChartData, ChartOptions} from "chart.js";
+import {ChartData, ChartOptions, ScaleOptions} from "chart.js";
 import {Prop} from "vue-property-decorator";
 import {StatsResult} from "@/views/comp/ClassificationResults.vue";
 
@@ -16,20 +16,36 @@ export default class PitchResGraph extends Vue
 {
   @Prop() stats: StatsResult
 
-  options: ChartOptions = {
-    scales: {
-      x: {
-        position: 'center',
-        min: 0,
-        max: 1,
-      },
-      y: {
-        position: 'center',
-        min: 0,
-        max: 1,
-      },
+  scaleOptions: ScaleOptions = {
+    position: 'center',
+    min: 0,
+    max: 1,
+    ticks: {
+      padding: -15,
+      showLabelBackdrop: true,
+      count: 5,
+      format: {
+        style: 'decimal',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }
     },
+    grid: {
+      drawBorder: false
+    }
+  }
+
+  options: ChartOptions = {
     maintainAspectRatio: false,
+    scales: {
+      x: {...this.scaleOptions},
+      y: {...this.scaleOptions, ticks: {...this.scaleOptions.ticks, padding: -19}},
+    },
+    plugins: {
+      legend: {
+        display: false
+      }
+    }
   }
 
   get chartData(): ChartData
