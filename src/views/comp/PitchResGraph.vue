@@ -46,16 +46,7 @@ export default class PitchResGraph extends Vue
   options: ChartOptions = {
     maintainAspectRatio: false,
     scales: {
-      x: {...scaleOptions,
-        // title: {
-        //   display: true,
-        //   text: 'Hello',
-        //   align: 'center',
-        //   color: 'white',
-        //   font: Chart.defaults.font,
-        //   padding: 4
-        // }
-      },
+      x: {...scaleOptions},
       y: {...scaleOptions, ticks: {...scaleOptions.ticks, padding: -19}},
     },
     plugins: {
