@@ -7,7 +7,7 @@
 <script lang="ts">
 import {Options, Vue} from 'vue-class-component';
 import {BubbleChart} from "vue-chart-3";
-import {ChartData, ChartOptions, ScaleOptions} from "chart.js";
+import {Chart, ChartData, ChartOptions, ScaleOptions} from "chart.js";
 import {Prop} from "vue-property-decorator";
 import {StatsResult} from "@/views/comp/ClassificationResults.vue";
 
@@ -24,11 +24,7 @@ export default class PitchResGraph extends Vue
       padding: -15,
       showLabelBackdrop: true,
       count: 5,
-      format: {
-        style: 'decimal',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      }
+      callback: (value: number, i, ticks) => value.toFixed(2)
     },
     grid: {
       drawBorder: false
