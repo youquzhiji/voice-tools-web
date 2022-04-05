@@ -107,8 +107,9 @@ export default class SpectrogramCanvas extends CanvasController
      * @param lineData
      * @param timeScale
      * @param color
+     * @param width
      */
-    async drawLine(lineData: Float32Array, timeScale: number, color: string)
+    async drawLine(lineData: Float32Array, timeScale: number, color: string, width: number = 1)
     {
         console.log('Drawing line...')
         console.log(lineData.length)
@@ -134,6 +135,7 @@ export default class SpectrogramCanvas extends CanvasController
 
             lastMean = windowMean
         }
+        this.ctx.lineWidth = width
         this.ctx.strokeStyle = color
         this.ctx.stroke()
         this.ctx.closePath()

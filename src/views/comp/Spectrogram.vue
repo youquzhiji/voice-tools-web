@@ -51,10 +51,10 @@ export default class Spectrogram extends Vue {
     if (this.freqArrays)
     {
       console.log('Frequency overlays updating')
-      await this.spectrogramCanvas.drawLine(this.freqArrays['pitch'], 0.032, '#7bff4f')
-      await this.spectrogramCanvas.drawLine(this.freqArrays['f1'], 0.032, '#7bff4f')
-      await this.spectrogramCanvas.drawLine(this.freqArrays['f2'], 0.032, '#7bff4f')
-      await this.spectrogramCanvas.drawLine(this.freqArrays['f3'], 0.032, '#7bff4f')
+      await this.spectrogramCanvas.drawLine(this.freqArrays['pitch'], 0.032, '#64fbff', 3)
+      await this.spectrogramCanvas.drawLine(this.freqArrays['f1'], 0.032, '#7bff4f', 2)
+      await this.spectrogramCanvas.drawLine(this.freqArrays['f2'], 0.032, '#93ffb9', 2)
+      await this.spectrogramCanvas.drawLine(this.freqArrays['f3'], 0.032, '#4ffff9', 1)
       timer.log('Lines drawn')
     }
 
