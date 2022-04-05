@@ -118,6 +118,8 @@ export default class SpectrogramCanvas extends CanvasController
         const maxMel = hzToMel(8000)
         lineData = lineData.map(it => this.h - hzToMel(it) / maxMel * this.h)
 
+        this.ctx.beginPath()
+
         for (let x = 0; x < this.w; x++)
         {
             const windowMean = mean(lineData.subarray(xLen * x, Math.ceil(xLen * (x + 1))))
