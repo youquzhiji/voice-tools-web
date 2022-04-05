@@ -11,31 +11,52 @@ import {Chart, ChartData, ChartOptions, ScaleOptions} from "chart.js";
 import {Prop} from "vue-property-decorator";
 import {StatsResult} from "@/views/comp/ClassificationResults.vue";
 
+
+const scaleOptions: ScaleOptions = {
+  position: 'center',
+  min: 0,
+  max: 1,
+  ticks: {
+    padding: -15,
+    showLabelBackdrop: true,
+    count: 5,
+    callback: (value: number, i, ticks) => value.toFixed(2)
+  },
+  grid: {
+    drawBorder: false
+  }
+}
+
+const sharedAnnotationOptions = {
+  backgroundColor: 'rgba(255,255,255,0.38)',
+  borderRadius: 10,
+  font: {
+    size: 15
+  }
+}
+
+
 @Options({components: {BubbleChart}})
 export default class PitchResGraph extends Vue
 {
   @Prop() stats: StatsResult
 
-  scaleOptions: ScaleOptions = {
-    position: 'center',
-    min: 0,
-    max: 1,
-    ticks: {
-      padding: -15,
-      showLabelBackdrop: true,
-      count: 5,
-      callback: (value: number, i, ticks) => value.toFixed(2)
-    },
-    grid: {
-      drawBorder: false
-    }
-  }
+
 
   options: ChartOptions = {
     maintainAspectRatio: false,
     scales: {
-      x: {...this.scaleOptions},
-      y: {...this.scaleOptions, ticks: {...this.scaleOptions.ticks, padding: -19}},
+      x: {...scaleOptions,
+        // title: {
+        //   display: true,
+        //   text: 'Hello',
+        //   align: 'center',
+        //   color: 'white',
+        //   font: Chart.defaults.font,
+        //   padding: 4
+        // }
+      },
+      y: {...scaleOptions, ticks: {...scaleOptions.ticks, padding: -19}},
     },
     plugins: {
       legend: {
@@ -43,45 +64,33 @@ export default class PitchResGraph extends Vue
       },
       annotation: {
         annotations: {
-          topLeft: {
+          topLeft: {...sharedAnnotationOptions,
             type: 'label',
             xValue: 0.25,
             yValue: 0.75,
             content: ['Unnatural'],
             color: 'rgba(255,148,8,0.76)',
-            font: {
-              size: 15
-            }
           },
-          topRight: {
+          topRight: {...sharedAnnotationOptions,
             type: 'label',
             xValue: 0.75,
             yValue: 0.75,
             content: ['Feminine'],
             color: 'rgba(255,65,65,0.46)',
-            font: {
-              size: 15
-            }
           },
-          bottomRight: {
+          bottomRight: {...sharedAnnotationOptions,
             type: 'label',
             xValue: 0.75,
             yValue: 0.25,
             content: ['Unnatural'],
             color: 'rgba(255,148,8,0.76)',
-            font: {
-              size: 15
-            }
           },
-          bottomLeft: {
+          bottomLeft: {...sharedAnnotationOptions,
             type: 'label',
             xValue: 0.25,
             yValue: 0.25,
             content: ['Masculine'],
             color: 'rgba(75,138,255,0.76)',
-            font: {
-              size: 15
-            }
           }
         }
       }
