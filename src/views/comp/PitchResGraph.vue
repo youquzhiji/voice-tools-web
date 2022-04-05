@@ -17,6 +17,18 @@ export default class PitchResGraph extends Vue
   @Prop() stats: StatsResult
 
   options: ChartOptions = {
+    scales: {
+      x: {
+        position: 'center',
+        min: 0,
+        max: 1,
+      },
+      y: {
+        position: 'center',
+        min: 0,
+        max: 1,
+      },
+    },
     maintainAspectRatio: false,
   }
 
