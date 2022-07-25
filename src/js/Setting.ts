@@ -61,8 +61,8 @@ export class Setting<T>
 }
 
 export const options: Setting<any>[] = [
-    new Setting("spec.local", "**Compute spectrogram locally** - enable if you have *really* bad internet like <1 MB/s", false),
-    new Setting("backend.url", "**Backend host** - you can run your own backend to speed up things! [read more]()", "http://localhost:8000")
+    // new Setting("spec.local", "**Compute spectrogram locally** - enable if you have *really* bad internet like <1 MB/s", false),
+    new Setting("backend.url", "**Backend host** - you can run your own backend to speed up things!", "https://voice-backend.hydev.org")
 ]
 
 export const optionsMap: {[index: string]: Setting<any>} = options.reduce((acc, curr) => (acc[curr.key] = curr, acc), {})
