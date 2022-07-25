@@ -7,6 +7,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@bokuweb/zstd-wasm": "^0.0.17",
     "@fortawesome/fontawesome-free": "^6.0.0",
     "@tensorflow/tfjs": "^3.13.0",
     "buffer": "^6.0.3",
