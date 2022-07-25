@@ -1,17 +1,17 @@
 <template>
   <div id="home" ref="el" class="fbox-v">
-    <div class="usage" v-if="!audio">
+    <div class="usage">
       Welcome to the voice analysis tool!
       <br>
       Drop or record an audio to analyze.
     </div>
 
-    <div class="drop-box unselectable shadow" @dragover="(e) => e.preventDefault()" @drop="onDrop" v-if="!audio">
+    <div class="drop-box unselectable shadow" @dragover="(e) => e.preventDefault()" @drop="onDrop">
       <span class="drop-label" v-if="!dropped">Drop Here</span>
       <Loading v-else></Loading>
     </div>
 
-    <div class="drop-box unselectable shadow record clickable" @click="btnRecord" v-if="!audio && recorderCompatible">
+    <div class="drop-box unselectable shadow record clickable" @click="btnRecord" v-if="recorderCompatible">
       <span class="drop-label" v-if="!recorder">Record</span>
       <span class="drop-label" v-else>Stop Recording</span>
     </div>
@@ -52,7 +52,7 @@ export default class Home extends Vue
         `- Type: ${file.type}`)
 
     // Upload file to be processed
-    let res = request(`/process`, {file: file}).then(async it => {
+    request(`/process`, {file: file}).then(async it => {
       const resp = await it.json()
       window.location.href = `/result/${resp.uuid}`
     })
