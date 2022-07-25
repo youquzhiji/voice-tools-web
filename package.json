@@ -16,7 +16,6 @@
     "element-plus": "^2.1.8",
     "js-file-download": "^0.4.12",
     "marked": "^4.0.12",
-    "meyda": "^5.3.0",
     "vue": "^3.2.25",
     "vue-chart-3": "^3.1.8",
     "vue-router": "4"
@@ -26,7 +25,6 @@
     "@types/jquery": "^3.5.14",
     "@types/jqueryui": "^1.12.16",
     "@types/marked": "^4.0.3",
-    "@types/meyda": "^4.3.2",
     "@types/node": "^17.0.15",
     "@vitejs/plugin-vue": "^2.0.0",
     "sass": "^1.49.7",
