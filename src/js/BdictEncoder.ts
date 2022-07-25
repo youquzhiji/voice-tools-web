@@ -11,6 +11,7 @@ export async function bdictDecode(bdict: ArrayBuffer): Promise<any>
 
   let i = 0
   const dic = {}
+  const enc = new TextDecoder()
 
   while (i < buf.byteLength)
   {
@@ -18,9 +19,9 @@ export async function bdictDecode(bdict: ArrayBuffer): Promise<any>
     i += 4
     const lv = buf.readUInt32BE(i)
     i += 4
-    const k = buf.subarray(i, i + lk).toString('utf-8')
+    const k = enc.decode(bdict.slice(i, i + lk))
     i += lk
-    const v = buf.subarray(i, i + lv)
+    const v = bdict.slice(i, i + lv)
     i += lv
 
     dic[k] = v

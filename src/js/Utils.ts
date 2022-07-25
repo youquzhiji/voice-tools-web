@@ -103,8 +103,10 @@ export class Gradient
 
 export async function decodeBdictResult(buf: ArrayBuffer)
 {
+    const enc = new TextDecoder()
     const bd = await bdictDecode(buf)
-    const obj = JSON.parse(bd.json)
+    console.log(bd)
+    const obj = JSON.parse(enc.decode(bd.json))
     obj.spec = decodeNdArray(bd.spec, obj.spec_rows)
     obj.freqArrays = decodeFreqArray(bd.freq_array)
     return obj
@@ -115,7 +117,7 @@ export async function decodeBdictResult(buf: ArrayBuffer)
  *
  * @param buf Buffer
  */
-export function decodeFreqArray(buf: Buffer): {[index: string]: Float32Array}
+export function decodeFreqArray(buf: ArrayBuffer): {[index: string]: Float32Array}
 {
     const array = new Float32Array(buf)
     const keys = ['pitch', 'f1', 'f2', 'f3']
@@ -129,7 +131,7 @@ export function decodeFreqArray(buf: Buffer): {[index: string]: Float32Array}
     return result
 }
 
-export function decodeNdArray(buf: Buffer, rows: number): Float32Array[]
+export function decodeNdArray(buf: ArrayBuffer, rows: number): Float32Array[]
 {
     const array = new Float32Array(buf)
     const cols = array.length / rows
