@@ -1,6 +1,5 @@
 import chroma from "chroma-js";
 import buffer from "buffer";
-import {FeatureLiteral} from "@/views/comp/ClassificationResults.vue";
 import {getSetting} from "@/js/Setting";
 
 export type NumberArray = Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array |

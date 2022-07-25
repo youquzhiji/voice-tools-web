@@ -1,26 +1,7 @@
 import CanvasController from "@/js/CanvasController";
-import * as tf from '@tensorflow/tfjs'
 import chroma from "chroma-js";
 import {extremes, Gradient, mean, Timer} from "@/js/Utils";
-import {hzToMel, melWeight, ticksMel2} from "@/js/scales/Scales";
-
-
-export async function melStft(data: Float32Array, sr: number, hopLen: number = 512, winLen: number = 2048)
-{
-    const spec = tf.signal.stft(tf.tensor1d(data), winLen, hopLen).abs()
-    const melBasis = melWeight(sr, winLen)
-    const tensor = melBasis.dot(spec.transpose()).transpose()
-    const array1d = await tensor.data()
-    const out = []
-
-    const [xLen, yLen] = tensor.shape
-
-    for (let i = 0; i < xLen; i++)
-        out.push(array1d.subarray(i * yLen, (i + 1) * yLen))
-
-    return out
-}
-
+import {hzToMel, ticksMel2} from "@/js/scales/Scales";
 
 /**
  * Draw a pixel at a specific point
@@ -48,21 +29,6 @@ export function drawAt(imgData: Uint8ClampedArray, x4: number, y: number, w4: nu
 
 export default class SpectrogramCanvas extends CanvasController
 {
-    /**
-     * Draw full audio
-     *
-     * @param audio Full decoded audio
-     */
-    async drawAudio(audio: AudioBuffer)
-    {
-        const timer = new Timer()
-        const spec = await melStft(audio.getChannelData(0), 16000)
-
-        timer.log(`Spectrogram - Mel STFT calculation done`)
-        console.log(spec)
-        return await this.drawData(spec, 16000)
-    }
-
     async drawData(spec: Float32Array[], sr: number)
     {
         const timer = new Timer()

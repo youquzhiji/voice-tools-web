@@ -1,8 +1,6 @@
 /**
  * This class defines one setting option
  */
-import {computed, ref, Ref} from "vue";
-
 export class Setting<T>
 {
     key: string

@@ -61,7 +61,6 @@ import Waveform from "@/views/comp/Waveform.vue";
 import ClassificationResults, {MLFrame, StatsResult} from "@/views/comp/ClassificationResults.vue";
 import {decodeFreqArray, decodeNdArray, request, Timer} from "@/js/Utils";
 import {getSetting} from "@/js/Setting";
-import {melStft} from "@/js/SpectrogramCanvas";
 import PitchResGraph from "@/views/comp/PitchResGraph.vue";
 
 @Options({components: {PitchResGraph, ClassificationResults, Waveform, Spectrogram, Loading}})
@@ -91,7 +90,6 @@ export default class Home extends Vue
   async loadFile(file: File)
   {
     const timer = new Timer()
-    const localSpec = getSetting('spec.local').val
 
     console.log(`File Dropped: ${file.name}\n` +
         `- LastModified: ${file.lastModified}\n` +
@@ -99,15 +97,12 @@ export default class Home extends Vue
         `- Type: ${file.type}`)
 
     // Upload file to be processed
-    let res = request(`/process`, {file: file, params: {with_mel_spect: !localSpec}}).then(async it => {
+    let res = request(`/process`, {file: file}).then(async it => {
       let json = await it.json()
       this.stats = json.result
       this.ml = json.ml
-      if (!localSpec)
-      {
-        this.specSr = json.spec_sr
-        this.spec = decodeNdArray(json.spec.bytes, json.spec.shape)
-      }
+      this.specSr = json.spec_sr
+      this.spec = decodeNdArray(json.spec.bytes, json.spec.shape)
       this.freqArrays = decodeFreqArray(json.freq_array.bytes, json.freq_array.shape)
       console.log(json)
     })
@@ -123,14 +118,6 @@ export default class Home extends Vue
         `- Array Length: ${this.audio.length}\n` +
         `- Duration: ${this.audio.duration} sec\n` +
         `- Number of Channels: ${this.audio.numberOfChannels}\n`)
-
-    // Calculate mel spectrogram locally (around 100x slower than tf backend)
-    if (localSpec)
-    {
-      this.spec = await melStft(data, 16000)
-      this.specSr = 16000
-      timer.log(`Spectrogram - Mel STFT calculation done`)
-    }
   }
 
   /**
