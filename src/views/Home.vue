@@ -59,7 +59,7 @@ import Spectrogram from "@/views/comp/Spectrogram.vue";
 import Loading from "@/views/comp/Loading.vue";
 import Waveform from "@/views/comp/Waveform.vue";
 import ClassificationResults, {MLFrame, StatsResult} from "@/views/comp/ClassificationResults.vue";
-import {decodeFreqArray, decodeNdArray, request, Timer} from "@/js/Utils";
+import {decodeBdictResult, decodeFreqArray, decodeNdArray, request, Timer} from "@/js/Utils";
 import {getSetting} from "@/js/Setting";
 import PitchResGraph from "@/views/comp/PitchResGraph.vue";
 
@@ -98,13 +98,13 @@ export default class Home extends Vue
 
     // Upload file to be processed
     let res = request(`/process`, {file: file}).then(async it => {
-      let json = await it.json()
-      this.stats = json.result
-      this.ml = json.ml
-      this.specSr = json.spec_sr
-      this.spec = decodeNdArray(json.spec.bytes, json.spec.shape)
-      this.freqArrays = decodeFreqArray(json.freq_array.bytes, json.freq_array.shape)
-      console.log(json)
+      let obj = await decodeBdictResult(await it.arrayBuffer())
+      this.stats = obj.result
+      this.ml = obj.ml
+      this.specSr = obj.spec_sr
+      this.spec = obj.spec
+      this.freqArrays = obj.freqArrays
+      console.log(obj)
     })
 
     // Read file

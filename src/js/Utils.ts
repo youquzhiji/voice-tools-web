@@ -1,6 +1,7 @@
 import chroma from "chroma-js";
 import buffer from "buffer";
 import {getSetting} from "@/js/Setting";
+import {bdictDecode} from "@/js/BdictEncoder";
 
 export type NumberArray = Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array |
     Float32Array | Float64Array | number[] | Array<number>
@@ -100,19 +101,26 @@ export class Gradient
     }
 }
 
+export async function decodeBdictResult(buf: ArrayBuffer)
+{
+    const bd = await bdictDecode(buf)
+    const obj = JSON.parse(bd.json)
+    obj.spec = decodeNdArray(bd.spec, obj.spec_rows)
+    obj.freqArrays = decodeFreqArray(bd.freq_array)
+    return obj
+}
 
 /**
  * Decode frequency ndarray
  *
- * @param b64 Base 64 encoded
- * @param shape Shape
+ * @param buf Buffer
  */
-export function decodeFreqArray(b64: string, shape: number[]): {[index: string]: Float32Array}
+export function decodeFreqArray(buf: Buffer): {[index: string]: Float32Array}
 {
-    const array = new Float32Array(buffer.Buffer.from(b64, 'base64').buffer)
-    const rows = shape[0]
-    const cols = array.length / rows
+    const array = new Float32Array(buf)
     const keys = ['pitch', 'f1', 'f2', 'f3']
+    const rows = keys.length
+    const cols = array.length / rows
     const result = {}
 
     for (let x = 0; x < rows; x++)
@@ -121,10 +129,9 @@ export function decodeFreqArray(b64: string, shape: number[]): {[index: string]:
     return result
 }
 
-export function decodeNdArray(b64: string, shape: number[]): Float32Array[]
+export function decodeNdArray(buf: Buffer, rows: number): Float32Array[]
 {
-    const array = new Float32Array(buffer.Buffer.from(b64, 'base64').buffer)
-    const rows = shape[0]
+    const array = new Float32Array(buf)
     const cols = array.length / rows
     const result = []
 
