@@ -53,8 +53,8 @@ export default class Home extends Vue
 
     // Upload file to be processed
     let res = request(`/process`, {file: file}).then(async it => {
-      // TODO
-      alert("TODO")
+      const resp = await it.json()
+      window.location.href = `/result/${resp.uuid}`
     })
 
     // Read file
