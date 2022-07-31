@@ -1,7 +1,7 @@
 <template>
   <div id="Settings" class="card shadow">
     <div id="text">
-      <div id="title">Settings</div>
+      <div id="title">{{ $t("settings.title") }}</div>
       <div id="subtitle">You can toggle things here!</div>
     </div>
 

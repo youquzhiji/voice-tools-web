@@ -9,8 +9,9 @@ import '@fortawesome/fontawesome-free/css/solid.min.css'
 
 import {Chart, registerables} from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
+import {i18n} from "@/languages";
 
 Chart.register(...registerables)
 Chart.register(annotationPlugin)
 
-createApp(App).use(router).use(ElementPlus).mount('#app')
+createApp(App).use(router).use(i18n).use(ElementPlus).mount('#app')
