@@ -44,9 +44,15 @@ export default class PitchResGraph extends Vue
 {
   @Prop() stats: StatsResult
 
+  mounted()
+  {
+    alert("TODO: 这一页还没有写完, 敬请期待~")
+  }
+
   get position()
   {
-    return {x: 0.7, y: 0.6}
+    // return {x: 0.7, y: 0.6}
+    return {x: 0, y: 0}
   }
 
   options: ChartOptions = {
