@@ -1,6 +1,6 @@
 # 6414 Frontend
 
-[Nightly Demo Link](https://alpha.voice.hydev.org/)
+[Nightly Demo Link](https://voice.hydev.org/)
 
 ## Info
 
