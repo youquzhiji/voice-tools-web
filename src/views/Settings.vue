@@ -1,29 +1,31 @@
 <template>
-  <div id="Settings" class="card shadow">
-    <div id="text">
-      <div id="title">{{ $t("settings.title") }}</div>
-      <div id="subtitle">You can toggle things here!</div>
-    </div>
+  <div id="settings" class="fbox-v">
+    <div class="card shadow">
+      <div id="text">
+        <div id="title">{{ $t("settings.title") }}</div>
+        <div id="subtitle">You can toggle things here!</div>
+      </div>
 
-    <div id="options">
-      <div v-for="option of options" :class="getClass(option)">
-        <div class="desc" v-html="marked(option.desc)" />
+      <div id="options">
+        <div v-for="option of options" :class="getClass(option)">
+          <div class="desc" v-html="marked(option.desc)" />
 
-        <div v-if="option.type === 'boolean'">
-          <el-switch v-model="option.val" active-color="pink"/>
-        </div>
+          <div v-if="option.type === 'boolean'">
+            <el-switch v-model="option.val" active-color="pink"/>
+          </div>
 
-        <div v-if="option.type === 'string'">
-          <hy-input v-model="option.val" />
-        </div>
+          <div v-if="option.type === 'string'">
+            <hy-input v-model="option.val" />
+          </div>
 
-        <div class="modified-text" v-if="option.modified">
-          <span>Modified!</span> <span>Default is <code>{{option.def}}</code></span>
+          <div class="modified-text" v-if="option.modified">
+            <span>Modified!</span> <span>Default is <code>{{option.def}}</code></span>
+          </div>
         </div>
       </div>
-    </div>
 
-    <el-button type="danger" plain round @click="reset">Reset</el-button>
+      <el-button type="danger" plain round @click="reset">Reset</el-button>
+    </div>
   </div>
 </template>
 
@@ -61,14 +63,16 @@ export default class Settings extends Vue
 </script>
 
 <style lang="sass" scoped>
-#Settings
-  width: 100%
-  max-width: 600px
-  margin: 20px auto 0
-  padding: 20px
+#settings
+  margin: 20px
 
-  > * + *
-    margin-top: 20px
+  .card
+    width: 100%
+    max-width: 600px
+    margin: 0 auto
+    display: flex
+    flex-direction: column
+    gap: 20px
 
   #text
     #title
@@ -96,7 +100,6 @@ export default class Settings extends Vue
 
     span:first-child
       color: red
-
 </style>
 
 <style lang="sass">
