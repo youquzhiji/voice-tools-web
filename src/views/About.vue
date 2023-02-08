@@ -1,6 +1,6 @@
 <template>
   <div id="about" class="fbox-v">
-    <div class="card shadow">
+    <div class="card shadow pad">
       This is an about page.
     </div>
   </div>

@@ -6,12 +6,12 @@
       Drop or record an audio to analyze.
     </div>
 
-    <div class="drop-box unselectable shadow" @dragover="(e) => e.preventDefault()" @drop="onDrop">
+    <div class="drop-box unselectable shadow card pad" @dragover="(e) => e.preventDefault()" @drop="onDrop">
       <span class="drop-label" v-if="!dropped">Drop Here</span>
       <Loading v-else></Loading>
     </div>
 
-    <div class="drop-box unselectable shadow record clickable" @click="btnRecord" v-if="recorderCompatible">
+    <div class="drop-box unselectable shadow card pad record clickable" @click="btnRecord" v-if="recorderCompatible">
       <span class="drop-label" v-if="!recorder">Record</span>
       <span class="drop-label" v-else>Stop Recording</span>
     </div>
@@ -136,13 +136,8 @@ export default class Home extends Vue
   .drop-box
     width: 100%
     max-width: 600px
-    margin-left: auto
-    margin-right: auto
+    margin: 0 auto
     height: 200px
-    border-radius: 25px
-    box-sizing: border-box
-    background: white
-    overflow: hidden
 
     display: flex
     align-items: center
@@ -150,7 +145,7 @@ export default class Home extends Vue
 
     .drop-label
       color: $color-bg
-      font-size: 1.5em
+      font-size: 1.3em
 
   .drop-box.record
     height: 100px

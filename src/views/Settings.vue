@@ -1,6 +1,6 @@
 <template>
   <div id="settings" class="fbox-v">
-    <div class="card shadow">
+    <div class="card shadow pad">
       <div id="text">
         <div id="title">{{ $t("settings.title") }}</div>
         <div id="subtitle">You can toggle things here!</div>
