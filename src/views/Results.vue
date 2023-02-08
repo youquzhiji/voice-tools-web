@@ -105,6 +105,7 @@ export default class Results extends Vue
   justify-content: center
   min-height: 40px
   color: $color-text-main
+  gap: 15px
 
   .tab-button
     padding: 5px 10px
@@ -113,7 +114,6 @@ export default class Results extends Vue
     justify-content: center
     border-radius: 10px 10px 0 0
     background: lighten(#fff4eb, 1)
-    margin: 0 10px
     min-width: 115px
 
   .tab-button.sel
@@ -135,4 +135,29 @@ export default class Results extends Vue
 .result-nav::before, .result-nav::after
   content: ''
   flex-grow: 1
+
+@media only screen and (max-width: 530px)
+  .result-nav
+    gap: 10px
+
+    .tab-button
+        font-size: 0.9em
+        min-width: 80px
+
+@media only screen and (max-width: 430px)
+  .result-nav
+    gap: 10px
+
+    .tab-button
+        font-size: 0.9em
+        min-width: 80px
+
+  // Disable card view for smaller devices
+  .results
+    margin: 0
+    font-size: 0.9em
+
+  .result-tab
+    margin: 0
+    border-radius: 0
 </style>
