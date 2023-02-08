@@ -128,9 +128,7 @@ export default class Home extends Vue
 
 #home
   margin: 0 20px 0
-
-  > * + *
-    margin-top: 20px
+  gap: 20px
 
   .usage
     color: $color-fg
