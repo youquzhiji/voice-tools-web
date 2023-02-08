@@ -65,7 +65,41 @@ export default class Spectrogram extends Vue {
       this.widthScale = wp / wt
       this.minWidthScale = this.widthScale
     }
+
+    // Register touch listeners
+    document.addEventListener('touchstart', this.onTouchStart)
+    document.addEventListener('touchmove', this.onTouchMove)
+    document.addEventListener('touchend', this.onTouchEnd)
+
     timer.log('Spectrogram mounted!')
+  }
+
+  unmounted()
+  {
+    // Unregister touch listeners
+    document.removeEventListener('touchstart', this.onTouchStart)
+    document.removeEventListener('touchmove', this.onTouchMove)
+    document.removeEventListener('touchend', this.onTouchEnd)
+  }
+
+  lastTouchX = -1
+
+  onTouchStart(e: TouchEvent)
+  {
+    if (e.touches.length != 1) return
+    this.lastTouchX = e.touches[0].clientX
+  }
+
+  onTouchMove(e: TouchEvent)
+  {
+    if (this.lastTouchX != -1)
+    this.scrollLocation += this.lastTouchX - e.touches[0].clientX
+    this.lastTouchX = e.touches[0].clientX
+  }
+
+  onTouchEnd(e: TouchEvent)
+  {
+    this.lastTouchX = -1
   }
 
   get width()
