@@ -92,8 +92,8 @@ export default class Spectrogram extends Vue {
 
   onTouchMove(e: TouchEvent)
   {
-    if (this.lastTouchX != -1)
-    this.scrollLocation += this.lastTouchX - e.touches[0].clientX
+    if (this.lastTouchX == -1) return
+    this.scroll(this.lastTouchX - e.touches[0].clientX)
     this.lastTouchX = e.touches[0].clientX
   }
 
@@ -114,7 +114,7 @@ export default class Spectrogram extends Vue {
   wheel(e: WheelEvent)
   {
     const lastWidthScale = this.widthScale
-    const el = e.target as HTMLElement
+    const el = this.$refs.spCanvas
     const rect = el.getBoundingClientRect()
 
     let direction = (e.detail < 0 || e.deltaY > 0) ? 1 : -1;
@@ -126,19 +126,7 @@ export default class Spectrogram extends Vue {
     if (e.ctrlKey) this.widthScale -= direction / 2
 
     // Scroll
-    else {
-      const pRect = el.parentElement.getBoundingClientRect()
-      let scrollDelta = direction * 20
-
-      // Normalize left margin
-      if (scrollDelta < 0) scrollDelta = Math.max(scrollDelta, rect.left - pRect.left)
-
-      // Normalize right margin
-      else scrollDelta = Math.min(scrollDelta, rect.right - pRect.right)
-
-      // Do scroll
-      this.scrollLocation += scrollDelta
-    }
+    else this.scroll(direction * 20)
 
     // TODO: Fix the problem where if you zoom in at the border, then scroll to the very border,
     //  then zoom out, it might appear out-of-bounds
@@ -155,6 +143,22 @@ export default class Spectrogram extends Vue {
       const offset = dc / lastWidthScale * this.widthScale - dc
       this.scrollLocation += offset
     }
+  }
+
+  scroll(delta: number)
+  {
+    const el = this.$refs.spCanvas
+    const rect = el.getBoundingClientRect()
+    const pRect = el.parentElement.getBoundingClientRect()
+
+    // Normalize left margin
+    if (delta < 0) delta = Math.max(delta, rect.left - pRect.left)
+
+    // Normalize right margin
+    else delta = Math.min(delta, rect.right - pRect.right)
+
+    // Do scroll
+    this.scrollLocation += delta
   }
 }
 </script>
