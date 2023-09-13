@@ -7,7 +7,7 @@
         <i class="fas fa-exclamation-triangle"></i>
       </div>
       <div class="expl">Please record at least 10 seconds for more accuracy.</div>
-      <div class="expl">(You're audio was {{audioDuration.toFixed(1)}} seconds long)</div>
+      <div class="expl">(You're audio was {{ audioDuration.toFixed(1) }} seconds long)</div>
     </div>
 
     <div class="title">Full Audio Statistics</div>
@@ -15,18 +15,19 @@
     <div class="features-bar" v-if="stats.fem_prob">
       <div class="feature" :class="f" v-for="f in ['pitch', 'f1', 'f2', 'f3', 'tilt']" ref="feature">
         <div class="description">
-          <span class="name">{{featureDescriptions[f].split(' - ')[0]}}</span>
-          <span class="desc"> {{featureDescriptions[f].split(' - ')[1]}}</span>
+          <span class="name">{{ featureDescriptions[f].split(' - ')[0] }}</span>
+          <span class="desc"> {{ featureDescriptions[f].split(' - ')[1] }}</span>
         </div>
         <div class="classification-bar unselectable clickable" @click="updateAccordion(f)">
-          <span class="f fbox-vcenter" :style="{width: `${(stats.fem_prob[f] * 100).toFixed(0)}%`}">
-            <span class="percentage-sub" :class="{right: stats.fem_prob[f] < 0.5}">
+          <span class="f fbox-vcenter"
+            :style="{ width: `${(stats.fem_prob[f] * 100).toFixed(0)}%`, borderRight: `${stats.fem_prob[f] !== 0 ? '5px solid white' : 'none'}` }">
+            <span class="percentage-sub" :class="{ right: stats.fem_prob[f] < 0.5 }">
               {{ (stats.fem_prob[f] * 100).toFixed(0) }}%
             </span>
           </span>
         </div>
         <div class="chart-wrapper">
-          <ScatterChart :height="200" :chartData="getCurveData(f)" :options="getOptions(f)" style="min-height: 200px"/>
+          <ScatterChart :height="200" :chartData="getCurveData(f)" :options="getOptions(f)" style="min-height: 200px" />
         </div>
       </div>
     </div>
@@ -41,8 +42,16 @@
         <span class="name">Machine Learning</span>
         <span class="desc">How your voice might sound like to a robot.</span>
       </div>
-      <div class="classification-bar ml-bar">
-        <div class="frame" v-for="frame of ml" :style="{width: `${(frame[2] - frame[1]) / totalTime * 100}%`, background: getColor(frame)}"/>
+      <div class="classification-bar ml-bar" :style="{
+        display: 'flex',
+        flexDirection: 'row'
+      }">
+        <div class="frame" v-for="frame of ml" :style="{
+          width: `${(frame[2] - frame[1]) / totalTime * 100}%`,
+          background: getColor(frame),
+          height: '100%',
+          flex: 'auto'
+        }" />
       </div>
     </div>
     <div class="no-features" v-else>Sorry, our model failed to detect voice on this audio.</div>
@@ -50,11 +59,11 @@
 </template>
 
 <script lang="ts">
-import {Options, Vue} from 'vue-class-component';
-import {Prop} from "vue-property-decorator";
+import { Options, Vue } from 'vue-class-component';
+import { Prop } from "vue-property-decorator";
 import curves from '@/data/vox1_kde_curves.json';
-import {DoughnutChart, LineChart, ScatterChart, useDoughnutChart} from "vue-chart-3";
-import {Chart, ChartData, ChartOptions, registerables, Plugin} from "chart.js";
+import { DoughnutChart, LineChart, ScatterChart, useDoughnutChart } from "vue-chart-3";
+import { Chart, ChartData, ChartOptions, registerables, Plugin } from "chart.js";
 
 const featureDescriptions = {
   pitch: 'Pitch / F0 - Whether the voice sounds high or low.',
@@ -67,8 +76,7 @@ const featureDescriptions = {
 // export type FeatureLiteral = 'pitch' | 'f1' | 'f2' | 'f3' | 'tilt'
 export type FeatureLiteral = string
 
-export interface Features
-{
+export interface Features {
   pitch: number
   f1: number
   f2: number
@@ -76,8 +84,7 @@ export interface Features
   tilt: number
 }
 
-export interface StatsResult
-{
+export interface StatsResult {
   means: Features
   fem_prob: Features
 }
@@ -85,45 +92,40 @@ export interface StatsResult
 export type MLLabel = 'speech' | 'music' | 'noise' | 'male' | 'female' | 'noEnergy'
 export type MLFrame = [MLLabel, number, number, number | null]
 
-@Options({components: {ScatterChart, DoughnutChart}})
-export default class ClassificationResults extends Vue
-{
+@Options({ components: { ScatterChart, DoughnutChart } })
+export default class ClassificationResults extends Vue {
   featureDescriptions = featureDescriptions
 
   @Prop() stats: StatsResult
   @Prop() ml: MLFrame[]
   @Prop() audioDuration: number
 
-  mounted()
-  {
-    $(`.feature`).accordion({collapsible: true, header: '.classification-bar', heightStyle: 'content',
-      active: false, animate: {easing: 'swing', duration: 500}})
-    $(`.feature.pitch`).accordion({active: 0})
+  mounted() {
+    $(`.feature`).accordion({
+      collapsible: true, header: '.classification-bar', heightStyle: 'content',
+      active: false, animate: { easing: 'swing', duration: 500 }
+    })
+    $(`.feature.pitch`).accordion({ active: 0 })
   }
 
-  get totalTime(): number
-  {
+  get totalTime(): number {
     return this.ml[this.ml.length - 1][2]
   }
 
-  getColor(frame: MLFrame): string
-  {
+  getColor(frame: MLFrame): string {
     const alpha = frame[3] ? frame[3] : 0
-    switch (frame[0])
-    {
+    switch (frame[0]) {
       case "female": return `rgba(255,190,200,${alpha})`
       case "male": return `rgba(129,218,255,${alpha})`
       default: return ``
     }
   }
 
-  updateAccordion(feature: FeatureLiteral)
-  {
-    $(`.feature:not(.${feature})`).accordion({active: false})
+  updateAccordion(feature: FeatureLiteral) {
+    $(`.feature:not(.${feature})`).accordion({ active: false })
   }
 
-  getOptions(feature: FeatureLiteral)
-  {
+  getOptions(feature: FeatureLiteral) {
     const chartOptions: ChartOptions = {
       scales: {
         y: {
@@ -157,14 +159,13 @@ export default class ClassificationResults extends Vue
     return chartOptions
   }
 
-  getCurveData(feature: FeatureLiteral)
-  {
+  getCurveData(feature: FeatureLiteral) {
     const d = curves[feature]
     const data: ChartData = {
       datasets: [
         {
           label: 'Masculine Range',
-          data: d.m[0].map((val, i) => { return {x: val, y: d.m[1][i]}}),
+          data: d.m[0].map((val, i) => { return { x: val, y: d.m[1][i] } }),
           borderColor: '#81daff',
           pointRadius: 0,
           showLine: true,
@@ -173,7 +174,7 @@ export default class ClassificationResults extends Vue
         },
         {
           label: 'Feminine Range',
-          data: d.f[0].map((val, i) => { return {x: val, y: d.f[1][i]}}),
+          data: d.f[0].map((val, i) => { return { x: val, y: d.f[1][i] } }),
           borderColor: '#ffbec8',
           pointRadius: 0,
           showLine: true,
